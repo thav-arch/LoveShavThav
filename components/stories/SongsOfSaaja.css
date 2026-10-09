@@ -1,0 +1,1176 @@
+/*
+ * Songs of Saaja — the Figma frame "Songs of Saaja" (1440 × 11576) as a page.
+ *
+ * Desktop (≥ 1024px): every element is placed at its frame position on a
+ * 1440-unit grid. 1 unit = var(--u) = 1/1440 of the page width, so the whole
+ * composition scales as one piece and stays exactly as designed.
+ * Phones and tablets (< 1024px): the same elements fall into one column in
+ * reading order (bottom of this file).
+ */
+
+.sj {
+  --u: calc(100cqw / 1440);
+  --dark: #161412;
+  --cream: #faf8e9;
+  --band: #f8ecd6;
+  --gold: #f2bc4c;
+  --ease-sj: cubic-bezier(0.22, 1, 0.36, 1);
+  container-type: inline-size;
+  position: relative;
+  overflow-x: clip;
+  background: var(--dark);
+  color: var(--cream);
+  font-family: var(--font-marcellus-sc), Georgia, serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+}
+.sj :is(h1, h2, h3, p, dl, dt, dd, figure) {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------ the grid */
+.sj-s {
+  position: relative;
+  height: calc(var(--sh) * var(--u));
+}
+.sj-a {
+  position: absolute;
+  z-index: 2;
+  left: calc(var(--x) * var(--u));
+  top: calc((var(--y) - var(--y0)) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: var(--hh, auto);
+}
+.sj-deco {
+  z-index: 1;
+  pointer-events: none;
+}
+.sj-t {
+  font-size: calc(var(--fs) * var(--u));
+  line-height: 1.25;
+}
+.sj-nw {
+  white-space: nowrap;
+}
+.sj-ink {
+  color: var(--dark);
+}
+.sj-ink0 {
+  color: #000;
+}
+.sj-ink2 {
+  color: #28231b;
+}
+.sj-ink3 {
+  color: #f4f4f4;
+}
+.sj-gold {
+  color: var(--gold);
+}
+.sj-u {
+  text-decoration: underline;
+  text-decoration-thickness: calc(2 * var(--u));
+  text-underline-offset: calc(6 * var(--u));
+}
+.sj-label {
+  color: #ffc773;
+  line-height: 0.96;
+}
+
+/* reveal on enter (the page adds .in) */
+.sj [data-reveal] {
+  opacity: 0;
+  translate: 0 calc(28 * var(--u));
+  transition:
+    opacity 1.1s var(--ease-sj),
+    translate 1.3s var(--ease-sj);
+}
+.sj [data-reveal].in {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* --------------------------------------------------------- pictures */
+.sj-pic {
+  overflow: hidden;
+}
+.sj-pic img {
+  object-fit: cover;
+}
+.sj-par {
+  position: absolute;
+  inset: -4% 0;
+}
+.sj-zoom img,
+.sj-ref img {
+  transition:
+    transform 1.4s var(--ease-sj),
+    filter 0.6s;
+}
+.sj-zoom:hover img {
+  transform: scale(1.02);
+}
+.sj-ref {
+  transition:
+    translate 1.3s var(--ease-sj),
+    opacity 1.1s var(--ease-sj),
+    box-shadow 0.5s;
+}
+.sj-ref:hover img {
+  transform: scale(1.03);
+  filter: brightness(1.08);
+}
+.sj-ref-map img {
+  object-fit: contain;
+}
+.sj-ref-map:hover img {
+  transform: scale(1.015);
+}
+
+/* ------------------------------------------------- key art + statement */
+.sj-hero {
+  overflow: hidden;
+  background: #2a1d14;
+}
+.sj-breathe {
+  position: absolute;
+  inset: 0;
+  animation: sj-breathe 26s ease-in-out infinite alternate;
+}
+.sj-breathe img {
+  object-fit: cover;
+}
+@keyframes sj-breathe {
+  to {
+    transform: scale(1.04);
+  }
+}
+/* drifting motes of warm light over the valley */
+.sj-motes {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+.sj-motes i {
+  position: absolute;
+  bottom: -2%;
+  left: calc(var(--i) * 7% + 2%);
+  width: calc((3 + (var(--i) * 7) % 4) * var(--u));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #ffd9a0;
+  box-shadow: 0 0 calc(10 * var(--u)) calc(3 * var(--u)) rgb(255 200 120 / 0.55);
+  opacity: 0;
+  animation: sj-mote calc(16s + var(--i) * 0.9s) linear infinite;
+  animation-delay: calc(var(--i) * -2.3s);
+}
+@keyframes sj-mote {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.55;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate3d(calc(40 * var(--u)), calc(-620 * var(--u)), 0);
+    opacity: 0;
+  }
+}
+.sj-band {
+  background: url("/projects/saaja-story/band.webp") repeat-x;
+  background-size: calc(264 * var(--u)) 100%;
+  background-position: calc(-72 * var(--u) + var(--drift, 0px) * 0.6) 0;
+}
+.sj-stem {
+  overflow: visible;
+}
+.sj-stem path:not(.sj-stem-tip) {
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 3;
+  stroke-dasharray: var(--len, 290);
+  stroke-dashoffset: calc(var(--len, 290) * (1 - var(--sp, 1)));
+}
+.sj-stem :is(circle, .sj-stem-tip) {
+  fill: var(--cream);
+  opacity: clamp(0, (var(--sp, 1) - 0.9) * 10, 1);
+}
+.sj-ring {
+  overflow: visible;
+  animation: sj-spin 40s linear infinite;
+}
+.sj-ring circle {
+  fill: none;
+  stroke: #c68c72;
+  stroke-width: 3;
+  stroke-dasharray: 6 6;
+}
+@keyframes sj-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+.sj-lede {
+  color: #f8ecd6;
+  text-align: center;
+}
+.sj-lede mark.hl {
+  background: none;
+  color: #c68c72;
+}
+.sj-meta {
+  display: contents;
+}
+.sj-meta-col {
+  border-top: calc(2 * var(--u)) solid var(--cream);
+  padding-top: calc(35 * var(--u));
+  font-size: calc(24 * var(--u));
+  line-height: 1.25;
+}
+.sj-meta-col dt {
+  color: #c78f74;
+}
+.sj-meta-col dd[data-bullet] {
+  position: relative;
+  padding-left: calc(36 * var(--u));
+}
+.sj-meta-col dd[data-bullet]::before {
+  content: "";
+  position: absolute;
+  left: calc(15 * var(--u));
+  top: 0.55em;
+  width: calc(5 * var(--u));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ------------------------------------------------ design process (cream) */
+.sj-cream {
+  z-index: 0;
+  background: var(--band);
+}
+.sj-rock {
+  translate: 0 calc(var(--drift, 0px) * 0.25);
+}
+.sj-sun {
+  animation: sj-spin 90s linear infinite;
+}
+.sj-sun-r {
+  animation-duration: 60s;
+  animation-direction: reverse;
+}
+.sj-disc {
+  z-index: 1;
+}
+.sj-trail {
+  overflow: visible;
+}
+.sj-trail > path {
+  fill: none;
+  stroke-width: 3;
+  stroke-dasharray: 13 13;
+}
+.sj-trail-mask path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 12;
+}
+/* waypoints on the trail light up as it reaches them */
+.sj-node {
+  border-radius: 50%;
+  background: var(--dark);
+  scale: 0.55;
+  opacity: 0.35;
+  transition:
+    scale 0.9s var(--ease-sj),
+    opacity 0.6s;
+}
+.sj-node::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: var(--cream);
+}
+.sj-node-lt {
+  background: var(--cream);
+}
+.sj-node-lt::after {
+  background: var(--dark);
+}
+.sj-node-end {
+  background: none;
+  border: calc(2 * var(--u)) dashed var(--cream);
+}
+.sj-node-end::before {
+  content: "";
+  position: absolute;
+  inset: calc(4.5 * var(--u));
+  border-radius: 50%;
+  background: var(--cream);
+}
+.sj-node-end::after {
+  inset: calc(12.5 * var(--u));
+  background: var(--dark);
+}
+.sj-node[data-lit] {
+  scale: 1;
+  opacity: 1;
+  animation: sj-ping 1.6s var(--ease-sj) 1;
+}
+@keyframes sj-ping {
+  0% {
+    box-shadow: 0 0 0 0 rgb(242 188 76 / 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 calc(22 * var(--u)) rgb(242 188 76 / 0);
+  }
+}
+.sj-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  font-size: calc(var(--fs) * var(--u));
+  line-height: 1.25;
+  color: #305542;
+  background: #faf6e3;
+  border: max(1px, calc(1 * var(--u))) solid #305542;
+  border-radius: calc(69 * var(--u));
+  transition:
+    translate 1.3s var(--ease-sj),
+    opacity 1.1s var(--ease-sj),
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.sj-chip-sm {
+  color: #415d54;
+}
+.sj-chip:hover {
+  background: #fffbea;
+  box-shadow: 0 calc(6 * var(--u)) calc(18 * var(--u)) rgb(48 85 66 / 0.14);
+}
+.sj-chip-dark {
+  color: #f4f4f4;
+  background: var(--dark);
+  border: 0;
+}
+.sj-chip-dark:hover {
+  background: #221e1a;
+  box-shadow: 0 0 0 calc(1 * var(--u)) rgb(242 188 76 / 0.35);
+}
+.sj-rule {
+  height: 1px;
+  background: #000;
+}
+.sj-glyphs {
+  height: auto;
+}
+
+/* ------------------------------------------------ final player journey */
+.sj-journey-art {
+  z-index: 0;
+}
+.sj-journey-band {
+  display: contents;
+}
+
+/* ------------------------------------------------------- art direction */
+.sj-star {
+  display: flex;
+  align-items: center;
+  gap: calc(10 * var(--u));
+}
+.sj-star i {
+  flex: 1;
+  height: 1px;
+  background: var(--cream);
+  transform-origin: right;
+  scale: 0 1;
+  transition: scale 1.4s var(--ease-sj) 0.2s;
+}
+.sj-star i:last-child {
+  transform-origin: left;
+}
+.sj-star.in i {
+  scale: 1 1;
+}
+.sj-star svg {
+  width: calc(27 * var(--u));
+  height: calc(27 * var(--u));
+  fill: var(--cream);
+  transition: rotate 1.6s var(--ease-sj);
+}
+.sj-star.in svg {
+  rotate: 90deg;
+}
+.sj-links {
+  overflow: visible;
+  clip-path: circle(calc(var(--sp, 1) * 80%) at 50% 38%);
+}
+.sj-links path {
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 2;
+  stroke-dasharray: 6 6;
+}
+.sj-links circle {
+  fill: var(--cream);
+}
+
+/* footprints walk down the trails as you scroll */
+.sj-walk svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  clip-path: inset(0 0 calc((1 - var(--sp, 1)) * 100%) 0);
+}
+.sj-walk path {
+  fill: none;
+  stroke: var(--cream);
+  stroke-width: 2;
+}
+.sj-walk circle {
+  fill: var(--dark);
+  stroke: var(--cream);
+  stroke-width: 2;
+}
+.sj-foot {
+  --on: clamp(0, var(--sp, 1) * 11 - var(--k) * 1.15, 1);
+  position: absolute;
+  left: calc(var(--fx) * var(--u));
+  top: calc((var(--fy) - 5300) * var(--u));
+  width: calc(var(--fw) * var(--u));
+  height: calc(var(--fh) * var(--u));
+  background: url("/projects/saaja-story/feet.webp") no-repeat;
+  background-size: calc(1054 * var(--u)) calc(202 * var(--u));
+  background-position: calc((176 - var(--fx)) * var(--u)) calc((5432 - var(--fy)) * var(--u));
+  opacity: var(--on);
+  scale: calc(0.85 + var(--on) * 0.15);
+}
+
+/* -------------------------------------------------------- level maps */
+.sj-map {
+  overflow: hidden;
+}
+.sj-map-in {
+  position: absolute;
+  inset: 0;
+}
+.sj-map img {
+  object-fit: cover;
+}
+.sj-spots {
+  position: absolute;
+  inset: 0;
+}
+.sj-spot {
+  position: absolute;
+  width: calc(26 * var(--u));
+  height: calc(26 * var(--u));
+  margin: calc(-13 * var(--u)) 0 0 calc(-13 * var(--u));
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.sj-spot::before,
+.sj-spot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: max(1.5px, calc(2 * var(--u))) solid var(--gold);
+  opacity: 0;
+  scale: 0.6;
+  transition:
+    opacity 0.35s,
+    scale 0.5s var(--ease-sj);
+}
+.sj-spot::after {
+  inset: 32%;
+  border: 0;
+  background: var(--gold);
+}
+.sj-map:hover .sj-spot::before {
+  opacity: 0.55;
+  scale: 1;
+  animation: sj-pulse 2.4s ease-in-out infinite;
+}
+.sj-spot[data-on]::before,
+.sj-spot:hover::before,
+.sj-spot:focus-visible::before {
+  opacity: 1;
+  scale: 1.25;
+  animation: sj-pulse 1.4s ease-in-out infinite;
+}
+.sj-spot[data-on]::after,
+.sj-spot:hover::after,
+.sj-spot:focus-visible::after {
+  opacity: 1;
+  scale: 1;
+}
+@keyframes sj-pulse {
+  50% {
+    box-shadow: 0 0 0 calc(7 * var(--u)) rgb(242 188 76 / 0.22);
+  }
+}
+.sj-spot span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8 * var(--u));
+  translate: -50% 4px;
+  padding: calc(5 * var(--u)) calc(10 * var(--u));
+  border-radius: calc(4 * var(--u));
+  background: rgb(22 20 18 / 0.92);
+  color: var(--cream);
+  font-size: max(11px, calc(14 * var(--u)));
+  line-height: 1.2;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s,
+    translate 0.35s var(--ease-sj);
+}
+.sj-spot:hover span,
+.sj-spot:focus-visible span,
+.sj-spot[data-on]:hover span {
+  opacity: 1;
+  translate: -50% 0;
+}
+
+/* -------------------------------------------------------- beat charts */
+.sj-table {
+  background: #fff;
+}
+.sj-table table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  color: #111827;
+  font-size: calc(16 * var(--u));
+  line-height: 1.25;
+}
+.sj-table :is(th, td) {
+  position: relative;
+  padding: 0 calc(8 * var(--u));
+  border: 1px solid #d1d5db;
+  text-align: center;
+  font-weight: 400;
+  vertical-align: middle;
+}
+.sj-table :is(th, td):first-child {
+  text-align: left;
+  padding-left: calc(12 * var(--u));
+  /* one line, as in the frame ("7. Animal Encounter 1" just fits) */
+  white-space: nowrap;
+  padding-right: calc(2 * var(--u));
+}
+.sj-table tbody tr {
+  opacity: 0;
+  translate: 0 calc(10 * var(--u));
+  transition:
+    opacity 0.7s var(--ease-sj),
+    translate 0.8s var(--ease-sj),
+    background-color 0.25s;
+  transition-delay: calc(var(--r) * 55ms + 0.25s), calc(var(--r) * 55ms + 0.25s), 0s;
+  outline: none;
+  cursor: default;
+}
+.sj-table.in tbody tr {
+  opacity: 1;
+  translate: 0 0;
+}
+.sj-table tbody tr:hover,
+.sj-table tbody tr:focus-visible,
+.sj-table tbody tr[data-on] {
+  background-color: #fbf3df;
+}
+.sj-table tbody tr[data-on] td:first-child {
+  box-shadow: inset calc(3 * var(--u)) 0 0 var(--gold);
+}
+/* Bana progression: four pieces gathered through the cave */
+.sj-bana {
+  position: absolute;
+  left: 50%;
+  bottom: calc(4 * var(--u));
+  translate: -50% 0;
+  display: flex;
+  gap: calc(3 * var(--u));
+}
+.sj-bana i {
+  width: calc(12 * var(--u));
+  height: calc(3 * var(--u));
+  border-radius: 2px;
+  background: #e5e7eb;
+  overflow: hidden;
+  position: relative;
+}
+.sj-bana i[data-on]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #c68c72;
+  transform-origin: left;
+  scale: 0 1;
+  transition: scale 0.6s var(--ease-sj);
+  transition-delay: calc(var(--r) * 55ms + 0.6s);
+}
+.sj-table.in .sj-bana i[data-on]::after {
+  scale: 1 1;
+}
+.sj-table tr:nth-child(7) .sj-bana i::after,
+.sj-table tr:nth-child(9) .sj-bana i::after {
+  background: var(--gold);
+}
+
+/* -------------------------------------------------- drafts timeline */
+.sj-range {
+  font-size: calc(20 * var(--u));
+  line-height: 1.25;
+}
+.sj-range strong {
+  display: block;
+  font-weight: 400;
+  font-size: calc(40 * var(--u));
+  color: var(--gold);
+}
+.sj-range-a,
+.sj-range-b {
+  position: absolute;
+  top: 0;
+}
+.sj-range-a {
+  left: 0;
+}
+.sj-range-b {
+  right: 0;
+  text-align: right;
+}
+.sj-range-mid {
+  position: absolute;
+  left: calc(459 * var(--u));
+  top: calc(37 * var(--u));
+  width: calc(295 * var(--u));
+  text-align: center;
+  font-size: calc(15 * var(--u));
+  color: rgb(208 255 198 / 0.56);
+}
+.sj-range-line {
+  position: absolute;
+  left: calc(157 * var(--u));
+  top: calc(18 * var(--u));
+  width: calc(899 * var(--u));
+  height: calc(14 * var(--u));
+  overflow: visible;
+  clip-path: inset(0 calc((1 - var(--sp, 1)) * 100%) 0 0);
+}
+.sj-range-line path:first-child {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.4;
+  stroke-dasharray: 6 5;
+  vector-effect: non-scaling-stroke;
+}
+.sj-range-line path:last-child {
+  fill: #fff;
+}
+.sj-range-dot {
+  position: absolute;
+  left: calc(599 * var(--u));
+  top: calc(38 * var(--u));
+  width: calc(13 * var(--u));
+  height: calc(13 * var(--u));
+  border-radius: 50%;
+  background: #7e9877;
+  animation: sj-glow 2.8s ease-in-out infinite;
+}
+@keyframes sj-glow {
+  50% {
+    box-shadow: 0 0 calc(12 * var(--u)) calc(2 * var(--u)) rgb(208 255 198 / 0.35);
+  }
+}
+
+/* ----------------------------------------------------- asset building */
+.sj-asset h3 {
+  font-size: calc(40 * var(--u));
+  line-height: 1.25;
+  color: var(--gold);
+}
+.sj-asset p {
+  font-size: calc(20 * var(--u));
+  line-height: 1.25;
+}
+.sj-asset i {
+  position: absolute;
+  left: calc(var(--dl) * var(--u));
+  top: calc(24 * var(--u));
+  width: calc(var(--dw) * var(--u));
+  height: 1px;
+  background: repeating-linear-gradient(90deg, #fff 0 calc(7 * var(--u)), transparent calc(7 * var(--u)) calc(14 * var(--u)));
+  transform-origin: left;
+  scale: 0 1;
+  transition: scale 1.6s var(--ease-sj) 0.3s;
+}
+.sj-asset.in i {
+  scale: 1 1;
+}
+.sj-bana-card {
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: calc(11 * var(--u));
+  background: var(--dark);
+  text-align: center;
+}
+.sj-bana-card h3 {
+  font-size: calc(40 * var(--u));
+  line-height: 1.25;
+  color: var(--gold);
+}
+.sj-bana-card p {
+  width: calc(309 * var(--u));
+  font-size: calc(20 * var(--u));
+  line-height: 1.25;
+}
+
+.sj-hr {
+  height: 1px;
+  background: #fff;
+}
+.sj-hr-in {
+  transform-origin: center;
+}
+
+/* ------------------------------------------------- gameplay video slot */
+.sj-video {
+  overflow: hidden;
+  background: #fff;
+}
+.sj-video-soon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--dark);
+  font-size: calc(32 * var(--u));
+}
+.sj-video :is(video, iframe) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #000;
+  object-fit: contain;
+}
+
+/* ------------------------------------------ the question · Gond strip · chapters */
+.sj-q {
+  color: #fafafa;
+  text-align: center;
+}
+.sj-qline {
+  height: 1px;
+  background: #f8ecd6;
+  transform-origin: center;
+  scale: 0 1;
+  transition: scale 1.4s var(--ease-sj);
+}
+.sj-qline.in {
+  scale: 1 1;
+}
+.sj-strip {
+  overflow: hidden;
+  background: #fff;
+}
+/* the strip is 4171 units wide (as in the frame); it travels 2731 units while it crosses the screen */
+.sj-strip img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(4171 * var(--u));
+  height: 100%;
+  max-width: none;
+  transform: translate3d(calc(var(--pan, 0) * -2731 * var(--u)), 0, 0);
+  will-change: transform;
+}
+.sj-draw {
+  overflow: visible;
+}
+.sj-draw path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: var(--sw, 4);
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--d, 1));
+}
+.sj-outline path {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sj-journey-title {
+  color: #e2bb3c;
+}
+.sj-chapter {
+  color: #c68c72;
+}
+.sj-chapter-n {
+  color: #f8ecd6;
+}
+.sj-white {
+  color: #fff;
+}
+.sj-env {
+  overflow: visible;
+}
+.sj-env img {
+  object-fit: contain;
+}
+.sj-env-frame {
+  z-index: 3;
+}
+.sj-env-title {
+  z-index: 4;
+}
+.sj-guide-q {
+  color: #fff;
+}
+.sj-rule2 {
+  height: calc(2 * var(--u));
+  background: var(--cream);
+  transform-origin: center;
+  scale: 0 1;
+  transition: scale 1.4s var(--ease-sj);
+}
+.sj-rule2.in {
+  scale: 1 1;
+}
+.sj-cues {
+  color: #e2e2e1;
+}
+.sj-intent2 {
+  color: #c78f74;
+}
+/* the dot clusters appear one dot at a time */
+.sj-dots {
+  overflow: visible;
+}
+.sj-dots circle {
+  opacity: clamp(0, var(--sp, 1) * 12 - var(--k), 1);
+  transition: opacity 0.4s;
+}
+.sj-hr-draw {
+  transform-origin: left;
+  scale: 0 1;
+  transition:
+    scale 1.6s var(--ease-sj),
+    opacity 0.6s;
+}
+.sj-hr-draw.in {
+  scale: 1 1;
+}
+.sj-card-wide p {
+  width: calc(394 * var(--u));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sj-breathe,
+  .sj-motes,
+  .sj-ring,
+  .sj-sun,
+  .sj-range-dot,
+  .sj-node[data-lit] {
+    animation: none;
+  }
+  .sj-motes {
+    display: none;
+  }
+}
+
+/* ======================================== phones and tablets (< 1024px) */
+@media (max-width: 1023px) {
+  .sj {
+    --pad: 20px;
+  }
+  .sj-s {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 56px var(--pad);
+  }
+  .sj-a {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: auto;
+    height: auto;
+  }
+  .sj-deco {
+    display: none;
+  }
+  .sj-t {
+    font-size: calc(var(--fs) * 0.5px + 7px);
+  }
+  .sj-nw,
+  .sj-chip {
+    white-space: normal;
+  }
+  .sj-pic,
+  .sj-video {
+    aspect-ratio: var(--ar);
+    width: 100%;
+  }
+  .sj [data-reveal] {
+    translate: 0 18px;
+  }
+  .sj :is(h2, h3).sj-t {
+    text-align: center;
+  }
+
+  /* key art bleeds edge to edge; the pattern band follows */
+  .sj-intro {
+    padding-top: 0;
+  }
+  .sj-hero {
+    margin: 0 calc(-1 * var(--pad));
+    width: auto;
+    aspect-ratio: 16 / 9;
+  }
+  .sj-band {
+    display: block;
+    margin: -18px calc(-1 * var(--pad)) 8px;
+    height: 72px;
+    background-size: auto 100%;
+  }
+  .sj-lede {
+    font-size: 26px;
+    line-height: 1.3;
+  }
+  .sj-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px 16px;
+    margin-top: 12px;
+  }
+  .sj-meta-col {
+    border-top-width: 1px;
+    padding-top: 12px;
+    font-size: 17px;
+  }
+  .sj-meta-col dd[data-bullet] {
+    padding-left: 18px;
+  }
+  .sj-meta-col dd[data-bullet]::before {
+    left: 4px;
+    width: 5px;
+  }
+
+  .sj-process {
+    background: var(--band);
+    padding-top: 64px;
+  }
+  .sj-process h2.sj-t {
+    text-align: left;
+  }
+  .sj-process .sj-ink:first-of-type {
+    margin-top: -12px;
+  }
+  .sj-chip {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 16px;
+    text-align: center;
+  }
+  .sj-process h3.sj-t {
+    margin-top: 22px;
+  }
+
+  .sj-journey {
+    padding-bottom: 0;
+  }
+  .sj-journey-band {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0 calc(-1 * var(--pad));
+    padding: 28px var(--pad);
+    background: var(--cream);
+    text-align: center;
+  }
+
+  /* art direction: map first, then each reference with its label */
+  .sj-art .sj-star {
+    display: flex;
+    width: 100%;
+    height: 27px;
+  }
+  .sj-art .sj-star svg {
+    width: 20px;
+    height: 20px;
+  }
+  .sj-art > * {
+    order: var(--mo, 0);
+  }
+  .sj-art > .sj-ref-map {
+    background: #faf8e9;
+    margin-bottom: 8px;
+  }
+  .sj-art > .sj-label {
+    margin-top: -10px;
+  }
+  .sj-art .sj-label {
+    font-size: 15px;
+    align-self: start;
+  }
+
+  .sj-map {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    margin: 0 calc(-1 * var(--pad));
+    width: auto;
+  }
+  .sj-map-in {
+    position: relative;
+    width: 980px;
+    aspect-ratio: var(--ar);
+    margin: 0 var(--pad);
+  }
+  .sj-table {
+    overflow-x: auto;
+    width: auto;
+    background: none;
+  }
+  .sj-table table {
+    min-width: 820px;
+    font-size: 13px;
+    background: #fff;
+  }
+  .sj-table :is(th, td) {
+    padding: 9px 10px;
+  }
+  .sj-bana {
+    bottom: 2px;
+  }
+  .sj-bana i {
+    width: 10px;
+    height: 2px;
+  }
+
+  .sj-range {
+    display: grid;
+    gap: 8px;
+    font-size: 15px;
+  }
+  .sj-range strong {
+    font-size: 26px;
+  }
+  .sj-range :is(.sj-range-a, .sj-range-b, .sj-range-mid) {
+    position: static;
+    width: auto;
+    text-align: left;
+  }
+  .sj-range-mid {
+    order: 1;
+    font-size: 14px;
+    padding-left: 14px;
+    border-left: 1px dashed rgb(255 255 255 / 0.5);
+  }
+  .sj-range-b {
+    order: 2;
+  }
+  .sj-range :is(.sj-range-line, .sj-range-dot) {
+    display: none;
+  }
+  .sj-asset h3,
+  .sj-bana-card h3 {
+    font-size: 26px;
+  }
+  .sj-asset p,
+  .sj-bana-card p {
+    font-size: 15px;
+    width: auto;
+  }
+  .sj-asset i {
+    display: none;
+  }
+  .sj-bana-card {
+    padding: 14px 16px 16px;
+    margin-top: -18px;
+  }
+  .sj-close .sj-hr {
+    display: block;
+    height: 1px;
+  }
+  .sj-video-s {
+    padding-bottom: 0;
+  }
+  .sj-video {
+    margin: 0 calc(-1 * var(--pad));
+    width: auto;
+  }
+
+  /* the question, the strip and the chapters */
+  .sj-intro .sj-q {
+    font-size: 26px;
+  }
+  .sj-strip-s {
+    padding: 8px 0;
+  }
+  .sj-strip {
+    height: 110px;
+  }
+  .sj-strip img {
+    width: auto;
+    height: 100%;
+    transform: translate3d(calc(var(--pan, 0) * (100vw - 1296px)), 0, 0);
+  }
+  .sj-forest > * {
+    order: var(--mo, 0);
+  }
+  .sj-forest .sj-env-title {
+    color: var(--cream);
+    margin-top: 12px;
+  }
+  .sj-chapter {
+    font-size: 38px;
+    margin-bottom: -14px;
+  }
+  .sj-video-soon {
+    font-size: 16px;
+  }
+  .sj-guide-q {
+    font-size: 22px;
+  }
+  .sj-cues {
+    padding: 14px 0;
+    border-block: 1px solid rgb(250 248 233 / 0.6);
+  }
+  .sj-drafts .sj-intent {
+    margin-top: 18px;
+    text-align: center;
+  }
+  .sj-drafts .sj-intent2 {
+    margin-top: -12px;
+    text-align: center;
+  }
+  .sj-l2 h2.sj-t {
+    text-align: right;
+  }
+}
