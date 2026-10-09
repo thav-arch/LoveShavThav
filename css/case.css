@@ -1,0 +1,125 @@
+/* Case-study page shell: scroller, top bar, content, footer. (From the original globals.css.) */
+.cs {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  overscroll-behavior: contain;
+  outline: none;
+  -webkit-overflow-scrolling: touch;
+}
+.cs-bar {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 15px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: var(--gutter);
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+  color: #fff;
+  mix-blend-mode: difference;
+}
+.cs-bar button {
+  letter-spacing: inherit;
+  text-transform: inherit;
+  justify-self: start;
+  transition: opacity 0.3s;
+}
+.cs-bar button:hover {
+  opacity: 0.55;
+}
+.cs-pager {
+  display: flex;
+  gap: 18px;
+  font-variant-numeric: tabular-nums;
+}
+.cs-pager span {
+  opacity: 0.5;
+}
+.cs-close {
+  justify-self: end !important;
+}
+.cs-close span {
+  font-size: 15px;
+  margin-left: 6px;
+  vertical-align: -1px;
+}
+.cs-content {
+  container-type: inline-size;
+  padding: 0 var(--gutter);
+  max-width: var(--measure, none);
+  margin: 0 auto;
+  will-change: transform;
+}
+/* a page built from a Figma frame runs edge to edge; only the footer keeps the gutter */
+.cs-content-story {
+  padding: 0;
+  max-width: none;
+}
+.cs-content-story > :is(.cs-adjacent, .cs-foot) {
+  margin-inline: var(--gutter);
+}
+.cs-content-story > .cs-adjacent {
+  margin-top: 14vh;
+}
+.cs-foot {
+  display: flex;
+  justify-content: space-between;
+  padding: 10vh 0 calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+}
+.cs-foot button {
+  letter-spacing: inherit;
+  text-transform: inherit;
+}
+.cs {
+  font-family: var(--cs-font, var(--font));
+}
+mark.hl,
+mark.hl2 {
+  background: none;
+  color: var(--hl, var(--accent));
+}
+mark.hl2 {
+  color: var(--hl2, var(--accent));
+}
+
+/* smooth-scroll helper (Lenis) */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent],
+.lenis [data-lenis-prevent-wheel],
+.lenis [data-lenis-prevent-touch],
+.lenis [data-lenis-prevent-vertical],
+.lenis [data-lenis-prevent-horizontal] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+.lenis.lenis-autoToggle {
+  transition-property: overflow;
+  transition-duration: 1ms;
+  transition-behavior: allow-discrete;
+}
+
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}

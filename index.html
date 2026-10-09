@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Thavanesh Nagarajan - Designer</title>
+    <meta name="description" content="Game designer and experience designer. Games, systems and interactive experiences at the intersection of gameplay, narrative, interaction and visual design." />
+    <meta name="theme-color" content="#000000" />
+    <link rel="stylesheet" href="css/fonts.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/world.css" />
+    <link rel="preload" href="fonts/InterTight.woff2" as="font" type="font/woff2" crossorigin />
+    <script type="importmap">
+      { "imports": { "three": "./js/vendor/three.module.js" } }
+    </script>
+  </head>
+  <body>
+    <div class="shell" data-mode="WORLD">
+      <!-- the 3D world is drawn into this element (js/world/scene.js) -->
+      <div class="scene"></div>
+
+      <!-- FULL view: the project list (filled from js/data.js) -->
+      <section class="index" aria-hidden="true" aria-label="All projects">
+        <div class="idx-list"></div>
+        <p class="idx-caption"></p>
+        <div class="idx-preview" aria-hidden="true"></div>
+      </section>
+
+      <!-- PROFILE: text shown inside the chrome portal (filled from js/data.js) -->
+      <section class="portal-content" aria-hidden="true" aria-label="Profile">
+        <div class="portal-inner">
+          <h1 class="pf-name"></h1>
+          <p class="pf-roles"></p>
+          <p class="pf-intro"></p>
+          <p class="pf-edu"></p>
+          <ul class="pf-skills"></ul>
+          <p class="pf-links"></p>
+        </div>
+      </section>
+
+      <nav class="nav" aria-label="Portfolio">
+        <button class="nav-tl">Thavanesh Nagarajan</button>
+        <button class="nav-tr" aria-expanded="false">Profile</button>
+        <div class="nav-bl">
+          <button class="nav-featured" aria-pressed="true"><span data-on>Featured</span></button>
+          <i aria-hidden="true">/</i>
+          <button class="nav-full" aria-pressed="false"><span>Full</span></button>
+        </div>
+        <div class="nav-counter" aria-live="polite" data-hidden>
+          <span>01</span>
+          <span class="nav-counter-bar"><span style="transform: scaleX(0.14)"></span></span>
+          <span>07</span>
+        </div>
+      </nav>
+
+      <div id="soon" class="soon" aria-live="polite"></div>
+
+      <!-- full-screen overlay used by the open / close project transitions -->
+      <div id="project-transition" class="pt" aria-hidden="true">
+        <img class="pt-media" alt="" />
+        <div class="pt-white"></div>
+      </div>
+
+      <!-- film-reel loader -->
+      <div class="fl" role="progressbar" aria-label="Loading portfolio" aria-busy="true">
+        <div class="fl-shutter fl-top"></div>
+        <div class="fl-shutter fl-bottom"></div>
+        <div class="fl-stage">
+          <div class="fl-strip">
+            <div class="fl-film"></div>
+            <div class="fl-gate"><span class="fl-count">000</span></div>
+          </div>
+          <div class="fl-slit"></div>
+          <div class="fl-meta">
+            <span>Thavanesh Nagarajan</span>
+            <span class="fl-bar"><i></i></span>
+            <span>Loading reel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- plain text for search engines and screen readers -->
+      <main class="sr-only">
+        <h1>Thavanesh Nagarajan — Game Designer, Experience Designer, Interaction Designer</h1>
+        <p>I design games, systems and interactive experiences at the intersection of gameplay, narrative, interaction and visual design.</p>
+        <ul>
+          <li><a href="projects/songs-of-saaja.html">Songs of Saaja — Narrative 3D Adventure</a></li>
+        </ul>
+      </main>
+    </div>
+
+    <script src="js/vendor/gsap.min.js"></script>
+    <script src="js/vendor/lenis.min.js"></script>
+    <script src="js/data.js"></script>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

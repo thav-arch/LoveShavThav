@@ -1,0 +1,54 @@
+/* Site tokens and reset (from the original globals.css). Edit the colours / font here. */
+/* ------------------------------------------------------------------ tokens */
+:root {
+  --bg: #000;
+  --fg: #fff;
+  --dim: rgba(255, 255, 255, 0.46);
+  --paper: #f1f0ec;
+  --ink: #0b0b0b;
+  --ink-dim: color-mix(in srgb, var(--ink) 50%, transparent);
+  --line: color-mix(in srgb, var(--ink) 14%, transparent);
+  --font: "Inter Tight", "Helvetica Neue", Arial, sans-serif;
+  --ui-case: uppercase;
+  --ease: cubic-bezier(0.19, 1, 0.22, 1);
+  --gutter: clamp(16px, 2.2vw, 30px);
+  --ui: 500 11px/1.2 var(--font);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 4px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+

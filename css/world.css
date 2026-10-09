@@ -1,0 +1,506 @@
+/* The 3D landing page: scene, film-reel loader, navigation, Full view, Profile portal, transition overlay */
+/* -------------------------------------------------------------- 3D scene */
+.scene {
+  position: fixed;
+  inset: 0;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.scene[data-covered] {
+  visibility: hidden;
+}
+
+
+/* ------------------------------------------------------------ film loader */
+.fl {
+  --h: clamp(110px, 19vh, 190px);
+  --fw: calc(var(--h) * 1.6); /* same aspect as the 3D frames */
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  color: #fff;
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+.fl-shutter {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50.5%;
+  background: #000;
+  will-change: transform;
+}
+.fl-top { top: 0; }
+.fl-bottom { bottom: 0; }
+.fl-stage {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--h);
+  transform: translateY(-50%);
+}
+.fl-strip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #070707;
+  will-change: transform;
+}
+/* film base: frames separated by dark bars, sprocket holes top and bottom */
+.fl-film {
+  position: absolute;
+  /* aligned so a whole frame sits exactly in the gate when the reel stops */
+  top: 0;
+  bottom: 0;
+  left: calc(50% - var(--fw) * 8.5 + 3px);
+  width: calc(50% + var(--fw) * 10.5);
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0 calc(var(--fw) / 24), transparent 0 calc(var(--fw) / 12)) 0 7% / 100% 6% no-repeat,
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.45) 0 calc(var(--fw) / 24), transparent 0 calc(var(--fw) / 12)) 0 93% / 100% 6% no-repeat,
+    repeating-linear-gradient(90deg, #1a1a1a 0 calc(var(--fw) - 6px), #070707 0 var(--fw)) 0 50% / 100% 72% no-repeat;
+  will-change: transform;
+}
+.fl-strip::after {
+  /* lamp falloff: the reel is brightest where it passes the gate */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 30% 120% at 50% 50%, rgba(255, 255, 255, 0.08), transparent 70%),
+    linear-gradient(90deg, #000 0, transparent 24%, transparent 76%, #000 100%);
+  pointer-events: none;
+}
+.fl-gate {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 14%;
+  width: calc(var(--fw) - 6px);
+  height: 72%;
+  transform: translateX(-50%);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.06) inset;
+}
+.fl-count {
+  font: 400 clamp(36px, 6vh, 64px) / 1 var(--font-display, var(--font));
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.fl-slit {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  margin-top: -0.5px;
+  background: #fff;
+  box-shadow: 0 0 18px 2px rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  pointer-events: none;
+}
+.fl-meta {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  top: calc(100% + 22px);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: var(--dim);
+}
+.fl-bar {
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.fl-bar i {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+/* keep the chrome hidden until the shutters open (the fade-in animation
+   restarts when the rule stops matching, so the UI still eases in) */
+.shell:has(> .fl:not([data-open])) .nav,
+.shell:has(> .fl:not([data-open])) .card-labels {
+  animation: none;
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ------------------------------------------------------------- navigation */
+.nav {
+  /* the fade-in animation makes .nav a stacking context, so the whole layer
+     must sit above the index / portal overlays (z-index 3–4) to stay clickable */
+  position: relative;
+  z-index: 6;
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+  transition: opacity 0.5s var(--ease);
+  animation: ui-in 1.4s 0.25s var(--ease) both;
+}
+.nav[data-hidden] {
+  opacity: 0;
+  pointer-events: none;
+}
+.nav > button,
+.nav > div {
+  position: fixed;
+  z-index: 5;
+}
+.nav button {
+  text-transform: inherit;
+  letter-spacing: inherit;
+  transition: opacity 0.3s;
+}
+.nav button:hover {
+  opacity: 0.55;
+}
+.nav-tl,
+.nav-tr {
+  top: calc(var(--gutter) + env(safe-area-inset-top, 0px));
+}
+.nav-bl,
+.nav-br,
+.nav-counter {
+  bottom: calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+}
+.nav-tl,
+.nav-bl {
+  left: max(var(--gutter), env(safe-area-inset-left, 0px));
+}
+.nav-tr,
+.nav-br {
+  right: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+.nav-bl {
+  display: flex;
+  align-items: center;
+}
+.nav-bl span {
+  opacity: 0.42;
+  transition: opacity 0.3s;
+}
+.nav-bl span[data-on] {
+  opacity: 1;
+}
+.nav-bl i {
+  font-style: normal;
+  opacity: 0.42;
+  margin: 0 0.5em;
+}
+.nav-counter {
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.5s;
+}
+.nav-counter[data-hidden] {
+  opacity: 0;
+}
+.nav-counter-bar {
+  width: 64px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+.nav-counter-bar span {
+  display: block;
+  height: 100%;
+  background: #fff;
+  transform-origin: left;
+  transition: transform 0.8s var(--ease);
+}
+@keyframes ui-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------- FULL index view */
+.index {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 90px var(--gutter);
+  text-align: center;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s 0.6s;
+}
+.index[data-on] {
+  pointer-events: auto;
+  visibility: visible;
+  transition: none;
+}
+.idx-list {
+  max-width: 1180px;
+  font-size: clamp(30px, 4.7vw, 78px);
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.index[data-on] .idx-list {
+  opacity: 1;
+}
+.idx-item {
+  letter-spacing: inherit;
+  transition: opacity 0.35s;
+}
+.idx-list[data-hovering] .idx-item:not([data-active]) {
+  opacity: 0.22;
+}
+.idx-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding: 0 0.04em 0.1em;
+}
+.idx-rise {
+  display: inline-block;
+  transform: translateY(115%);
+}
+.idx-item sup {
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  vertical-align: top;
+  position: relative;
+  top: 0.9em;
+  margin-right: 0.45em;
+  opacity: 0.5;
+}
+.idx-dot {
+  opacity: 0.3;
+  margin: 0 0.12em;
+}
+.idx-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--gutter) + 46px);
+  margin: 0;
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+  color: var(--dim);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.index[data-on] .idx-caption {
+  opacity: 1;
+  transition-delay: 0.6s;
+}
+.idx-preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: clamp(200px, 22vw, 340px);
+  aspect-ratio: 16 / 10;
+  border-radius: 10px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 4;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+}
+.idx-preview img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.idx-preview img[data-on] {
+  opacity: 1;
+}
+
+/* ------------------------------------------- portal content (profile etc.) */
+.portal-content {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity 0.35s, filter 0.35s, visibility 0s 0.35s;
+  visibility: hidden;
+}
+.portal-content[data-on] {
+  opacity: 1;
+  filter: blur(0);
+  visibility: visible;
+  transition: opacity 0.9s 0.85s var(--ease), filter 0.9s 0.85s var(--ease), visibility 0s;
+}
+.portal-inner {
+  max-width: min(450px, 54vh, 62vw);
+  pointer-events: auto;
+}
+.pf-name {
+  margin: 0 0 10px;
+  font: var(--ui);
+  letter-spacing: 0.16em;
+  text-transform: var(--ui-case, uppercase);
+}
+.pf-roles,
+.pf-edu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  margin: 0;
+  font: var(--ui);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: var(--ui-case, uppercase);
+  color: var(--dim);
+}
+.pf-intro {
+  margin: clamp(16px, 3.4vh, 30px) 0;
+  font-size: clamp(15px, min(1.5vw, 2.4vh), 21px);
+  line-height: 1.38;
+  letter-spacing: -0.012em;
+}
+.pf-edu {
+  flex-direction: column;
+  gap: 3px;
+  color: var(--fg);
+}
+.pf-skills {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px 12px;
+  margin: clamp(16px, 3.2vh, 28px) auto 0;
+  padding: 0;
+  max-width: 380px;
+  font: var(--ui);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: var(--ui-case, uppercase);
+  color: var(--dim);
+}
+
+/* -------------------------------------------------- transition overlay */
+.pt {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  visibility: hidden;
+  opacity: 0;
+  overflow: hidden;
+}
+.pt-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+.pt-white {
+  position: absolute;
+  inset: 0;
+  background: var(--paper);
+  opacity: 0;
+}
+
+/* ----------------------------------------------------------------- cursor */
+/* native cursors, as in the reference (see components/CustomCursor.tsx) */
+.scene canvas {
+  cursor: grab;
+}
+html[data-scene-cursor="pointer"] .scene canvas {
+  cursor: pointer;
+}
+html[data-scene-cursor="grabbing"],
+html[data-scene-cursor="grabbing"] * {
+  cursor: grabbing !important;
+}
+
+
+/* profile links */
+.pf-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 18px;
+  margin: clamp(14px, 3vh, 24px) 0 0;
+  font: var(--ui);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+}
+.pf-links a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 2px;
+}
+
+/* "case study coming soon" note for projects without a page yet */
+.soon {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--gutter) + 46px);
+  z-index: 7;
+  text-align: center;
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+  color: var(--dim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease);
+}
+.soon[data-on] {
+  opacity: 1;
+}
+
+/* phones */
+@media (max-width: 700px) {
+  .nav-counter {
+    display: none;
+  }
+  .portal-inner {
+    max-width: 54vw;
+  }
+  .pf-intro {
+    font-size: 14px;
+  }
+  .pf-roles,
+  .pf-skills {
+    font-size: 9px;
+    gap: 4px 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

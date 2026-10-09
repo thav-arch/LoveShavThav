@@ -1,0 +1,96 @@
+// Entry point of the landing page: wires the content (js/data.js), the 3D world, the loader, the
+// navigation, the Full view, the Profile portal and the project pages together.
+import { onCursorLabel } from "./core/cursor.js";
+import { onReveal } from "./core/loading.js";
+import { motion } from "./core/motion.js";
+import { setProjects } from "./core/projects.js";
+import * as store from "./core/store.js";
+import { createWorld } from "./world/scene.js";
+import { startLoader } from "./ui/loader.js";
+import { initIndex } from "./ui/index-view.js";
+import { initNav } from "./ui/nav.js";
+import { enterProject, exitProject, playIntro, setMode } from "./ui/transitions.js";
+
+const { projects, profile } = window.SITE;
+
+// The look of the 3D world — tune it here (values were set in the old dashboard's theme settings).
+Object.assign(motion.theme, {
+  gridHue: 0, // 0–1: rotates the glowing grid's colour
+  gridIntensity: 0.55, // 0 hides the floor grid, 1 = full glow
+  cursorWake: true, // the liquid ripple that follows the cursor
+  wakeStrength: 0.006,
+  cardRadius: 0.045, // rounded corners of the film frames
+});
+
+// paths in js/data.js are relative to the site root; make them absolute now, while the address bar is still the
+// home page (it changes to projects/<name>.html while a project is open)
+const abs = (u) => (u ? new URL(u, document.baseURI).href : u);
+setProjects(projects.map((p) => ({ ...p, id: p.slug, thumbnail: abs(p.thumbnail), thumbnailSmall: abs(p.thumbnailSmall), page: abs(p.page) })));
+
+/* ----------------------------------------------------------- profile portal */
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const portal = document.querySelector(".portal-content");
+portal.querySelector(".pf-name").textContent = profile.name;
+portal.querySelector(".pf-roles").innerHTML = profile.roles.map((r) => `<span>${esc(r)}</span>`).join("");
+portal.querySelector(".pf-intro").textContent = profile.intro;
+portal.querySelector(".pf-edu").innerHTML = profile.education.map((l) => `<span>${esc(l)}</span>`).join("");
+portal.querySelector(".pf-skills").innerHTML = profile.skills.map((s) => `<li>${esc(s)}</li>`).join("");
+portal.querySelector(".pf-links").innerHTML =
+  (profile.email ? `<a href="mailto:${esc(profile.email)}" tabindex="-1">Email</a>` : "") +
+  profile.links.map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" tabindex="-1">${esc(l.label)}</a>`).join("");
+
+/* --------------------------------------------------------------- the world */
+let world = null;
+try {
+  world = createWorld(document.querySelector(".scene"), { openProject: (slug, origin) => enterProject(slug, origin) });
+} catch (e) {
+  // no WebGL: the loader still finishes, and the page falls back to the Full (list) view
+  console.error("The 3D world could not start:", e);
+  import("./core/loading.js").then(({ loading }) => loading.markReady());
+  onReveal(() => {
+    playIntro(true);
+    setMode("INDEX");
+  });
+}
+onReveal(() => playIntro());
+
+initNav();
+initIndex();
+
+// cursor: grab over the world, pointer over a card, grabbing while dragging (core/cursor.js labels)
+onCursorLabel((label) => {
+  const root = document.documentElement;
+  if (label === "DRAG") root.dataset.sceneCursor = "grabbing";
+  else if (label) root.dataset.sceneCursor = "pointer";
+  else delete root.dataset.sceneCursor;
+});
+
+// the film-reel loader plays on every visit to the landing page
+startLoader(document.querySelector(".fl"));
+
+/* ------------------------------------------------------------- navigation */
+// Closing a project steps back in history (so the Back button and Close behave the same);
+// if the project was never pushed there is nothing to step back to, so it just closes.
+const closeProject = () => {
+  if (history.state?.project) history.back();
+  else exitProject(true);
+};
+// Escape steps back toward the world
+addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  const s = store.state;
+  if (s.mode === "PROJECT") closeProject();
+  else if (s.mode !== "WORLD") setMode("WORLD");
+});
+// the Close button on a case study
+document.addEventListener("project:close", closeProject);
+// Back / Forward: close the open project, or re-open the one the history entry belongs to
+addEventListener("popstate", () => {
+  const s = store.state;
+  if (s.transition !== "idle") return;
+  const slug = history.state?.project;
+  if (s.mode === "PROJECT" && !slug) exitProject(false);
+  else if (s.mode !== "PROJECT" && slug) enterProject(slug, "index");
+});
+
+window.__world = world; // handy for debugging in the console
