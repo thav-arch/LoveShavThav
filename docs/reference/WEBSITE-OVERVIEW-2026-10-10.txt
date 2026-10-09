@@ -1,0 +1,322 @@
+THAVANESH NAGARAJAN — PORTFOLIO WEBSITE
+How the current website works (written 10 Oct 2026, before a planned rebuild)
+=============================================================================
+
+This file describes the website as it exists today: what visitors see, what
+the dashboard (CMS) does, how content is stored, how it runs on your computer,
+and how it would go online. Nothing has been changed while writing it.
+
+Where it lives: the "portfolio" folder (the Desktop shortcut "Portfolio
+(latest from Claude)" points at the working copy; your Desktop\portfolio
+folder is a copy you update with UPDATE-MY-DESKTOP-COPY.bat).
+
+
+-----------------------------------------------------------------------------
+1. THE BIG PICTURE
+-----------------------------------------------------------------------------
+
+The site is two things in one:
+
+  A. The public portfolio — a 3D, animated website:
+       - a home page that is a 3D "film strip" of project cards you can drag
+         and scroll through,
+       - a page per project (a "case study"),
+       - a Journal (blog) and an About page.
+
+  B. A dashboard at /admin where you edit everything without touching code:
+     projects, blog posts, images, your profile, colours, music, users.
+
+Both are one application, built with:
+  - Next.js 16 + React 19 (the website framework)
+  - Three.js / React Three Fiber (the 3D world) + custom shaders (GPU effects)
+  - GSAP (animations) + Lenis (smooth scrolling)
+  - A PostgreSQL database (on your computer: "PGlite", a Postgres that runs
+    inside the app — nothing to install) accessed through Drizzle
+  - Zod (checks every form/API input), Marked (Markdown → HTML)
+
+Size today: roughly 19,500 lines of code
+  (app/ ≈ 5,800 · components/ ≈ 8,800 · lib/ ≈ 4,600 · scripts ≈ 300).
+Much of that is the 3D world, the section layout engine and the dashboard.
+
+
+-----------------------------------------------------------------------------
+2. WHAT VISITORS SEE (the public site)
+-----------------------------------------------------------------------------
+
+2.1 First visit — the film-reel loader
+  A projector-style intro: a strip of film runs through a gate while a
+  counter shows real loading progress (3D engine + project images). When
+  ready, the shutters part and the 3D strip slides in. It only plays when
+  the visit starts on the home page; deep links skip it.
+
+2.2 Home page ("/") — the 3D world
+  - The projects are frames on a long film strip that zig-zags over rollers
+    (like film threaded through a projector). Desktop, tablet and phone each
+    get their own arrangement.
+  - Scroll / drag / arrow keys move the strip; it loops forever. Frames bend
+    slightly with speed and settle smoothly (tuned to avoid motion sickness).
+  - Each card shows the project's cover image; the title, subtitle/year and
+    an indicator are drawn INTO the card, so they bend with it.
+  - A glowing pastel grid floor slides with the strip and lights up under the
+    cursor.
+  - The cursor leaves a short liquid "wake" ripple in the image.
+  - Corner navigation: your name (top-left), Profile (top-right),
+    Featured / Full (bottom-left), Playground (bottom-right), and a
+    position counter (bottom-centre).
+  - "Full" view: the strip drops away and the projects become a big list of
+    titles; hovering one shows a tilted floating preview; clicking opens it.
+  - "Profile" / "Playground": a liquid chrome "portal" (a ring that bends the
+    world behind it) opens in front of the camera with your profile text
+    inside (edited in Settings → Profile).
+
+2.3 Opening a project ("/projects/<name>")
+  - Clicking a card expands it to full screen, a white wash covers the
+    switch, and the case study fades in. Closing reverses it back into the
+    strip. Previous / Next buttons move between projects.
+  - Everything is a smooth in-page transition — the 3D world never reloads.
+
+2.4 Case-study pages — two kinds
+  a) "Built from sections" (the normal kind, every project can use it):
+     - Header: big title + statement + Role / Year / Discipline / Tools,
+       then the hero image — OR "key art first" (full-width art, a pattern
+       band and a line drawing down to the statement).
+     - Then any number of SECTIONS, each made in the dashboard:
+         • Images: layouts Auto / Full width / Rows / Grid / Collage /
+           Carousel; text above / beside / over / inside the images.
+         • Cards: numbered steps, timelines, a winding "path", or a
+           "Draft 1 → Draft 8" range.
+         • Table (e.g. a beat chart), Board (a centre image with labelled
+           reference images around it and dashed connectors), Divider
+           (footprints / pattern / line).
+         • Per-section look: presets (Classic, Statement, Split, Sticky story,
+           Spotlight…), background band, torn-paper edges, heading styles,
+           chips, decorative ornaments.
+     - Per-project theme (colours, font, pattern band), e.g. "Earth" =
+       dark + cream + clay/gold with the Marcellus SC font.
+     - Text supports Markdown plus ==highlight== and ^^highlight 2^^ colours.
+
+  b) "Built from a Figma frame" (currently only Songs of Saaja):
+     - A page coded one-to-one from your Figma frame (node 89:20318,
+       1440 × 14275). On desktop every element sits at its exact Figma
+       position, scaled to the window; below 1024px it becomes one column.
+     - Its own animations: the Gond-art strip pans sideways, the journey line
+       and forest/cave outlines draw themselves, a dashed progress trail
+       through the design process with nodes that light up, walking
+       footprints, beat-chart rows that link to hotspots on the level maps,
+       a Bana progression meter, drifting light motes over the key art.
+     - Its text (except title, statement, role, year, disciplines, tools and
+       the video link) is written in the code, not the dashboard.
+     - Files: components/stories/SongsOfSaaja.tsx + .css, images in
+       public/projects/saaja-story/ (≈ 2.3 MB of optimised WebP/SVG).
+     - Chosen in the dashboard: Project → "Case-study look" → Page.
+
+  Common to case studies: smooth scrolling, fade/slide reveals, gentle image
+  parallax, videos that play only while visible, a gameplay-video slot that
+  takes a YouTube / Vimeo link or a video file.
+
+2.5 Journal ("/journal") and About ("/about")
+  - Journal: blog posts written in Markdown, with covers, tags, categories,
+    scheduled publishing, and an RSS feed (/journal/feed.xml).
+  - About: your profile plus "Testimonials" and "Achievements" lists from
+    the dashboard.
+
+2.6 Background music (site-wide)
+  - A small "Sound on / off" control (bottom-right) with a volume slider.
+  - Different track per page type and per project, crossfading between pages,
+    resuming where a track left off, pausing in background tabs, dipping
+    under videos. Sound only starts after the visitor clicks (browser rule).
+  - Set in Settings → Music and Project → Music.
+
+2.7 Behind the scenes on the public site
+  - SEO: page titles/descriptions, share cards, sitemap.xml, robots.txt,
+    structured data for Google, canonical URLs.
+  - Old links keep working: changing a project's address (slug) creates a
+    permanent redirect automatically (e.g. /projects/wom → songs-of-saaja).
+  - Images are converted to WebP, resized for each screen, lazy-loaded.
+  - Visitors who ask their device for "reduced motion" get calm versions.
+
+
+-----------------------------------------------------------------------------
+3. THE DASHBOARD (/admin)
+-----------------------------------------------------------------------------
+
+Sign in with the admin email/password from the .env.local file.
+
+  Projects     the 3D cards + case studies. List order = order on the strip
+               (↑ ↓). Each project: title, address (slug), subtitle, summary,
+               year, role, tools, tags, category, cover (3D card image),
+               hero (header image), video, links, SEO, sections (see 2.4),
+               "Case-study look" (theme + page type), Music, publish status.
+               A live desktop/phone preview of each section.
+  Journal      blog posts (Markdown with preview), cover, tags, category,
+               scheduled publishing.
+  Testimonials / Achievements
+               simple lists shown on /about. New list types can be added
+               by editing one file (lib/cms/collections.ts) — no database
+               change needed.
+  Media        drag-and-drop uploads. Images → optimised WebP + small
+               preview + a brightness map (used to pick readable text over
+               images). Videos: MP4/WebM. Audio: MP3/M4A/OGG/WAV. SVG is
+               refused for safety. Files are checked by content, not name.
+               Can't delete a file that is still used somewhere.
+  Categories & tags
+  Settings     Site (title, description, URL, share image), Profile (text
+               in the portal and /about), Theme (colours, fonts, grid glow,
+               cursor wake, card corners, reading width), Music.
+  Users        add people with a role, reset passwords.
+
+  Roles:  Admin (everything) · Editor (all content, settings read-only,
+          no users) · Author (own drafts only, can upload, can't publish).
+
+  Publishing: only "published" items are public. Saving updates the live
+  site immediately.
+
+
+-----------------------------------------------------------------------------
+4. WHERE THE CONTENT IS STORED
+-----------------------------------------------------------------------------
+
+  Database (all text and settings)
+    - On your computer: one file, portfolio/.data/db.tar.gz. The database
+      runs in memory and is saved to that file about 2 seconds after every
+      change, written safely (temp file then swap) so a crash can't corrupt
+      it.
+    - A backup copy is made in .data/backups on every start (newest 10 kept),
+      plus manual backups made before big edits (e.g.
+      before-songs-of-saaja.tar.gz, before-saaja-v2.tar.gz).
+    - A lock file stops two copies of the site using the database at once.
+    - Tables: users, sessions, projects, posts, media, categories, tags,
+      entries (testimonials/achievements/…), settings, redirects.
+    - Database structure changes are "migrations" in portfolio/drizzle/
+      (applied automatically when the site starts).
+    - Online, the same code uses a normal PostgreSQL database instead
+      (set by the DATABASE_URL setting).
+
+  Uploaded files (images, videos, music)
+    - portfolio/storage/uploads/ (random file names), served at /uploads/…
+
+  Images that ship with the code
+    - portfolio/public/projects/… (the original seeded projects' images and
+      the Songs of Saaja page's images).
+
+  Login and secrets
+    - portfolio/.env.local: ADMIN_EMAIL, ADMIN_NAME, ADMIN_PASSWORD,
+      SITE_URL. (Online also: DATABASE_URL, UPLOAD_DIR.) Keep this private.
+
+  Original content
+    - portfolio/data/seed-projects.ts holds the first five projects (GOND,
+      DABBA WALA, UMBRELLA MAN, ELEVATOR EMPIRE, FARMVILLE 2 EVENT DESIGN),
+      used only to fill an empty database. Your current content (Songs of
+      Saaja, PowerUI Library, Dashboards and UI, etc.) lives in the database.
+      Note: "Dashboards and UI" and "PowerUI Library" point at thumbnail
+      images that don't exist (they show up as missing).
+
+
+-----------------------------------------------------------------------------
+5. RUNNING IT ON YOUR COMPUTER
+-----------------------------------------------------------------------------
+
+  START-WEBSITE.bat            installs everything the first time (needs
+                               Node.js + internet), creates the database if
+                               missing, starts the site and opens the
+                               browser. Keep its window open; close it to
+                               stop the site.
+                                 Website: http://localhost:3000
+                                 Dashboard: http://localhost:3000/admin
+  UPDATE-MY-DESKTOP-COPY.bat   copies the newest code into Desktop\portfolio
+                               without touching your database, uploads or
+                               login file.
+  REPAIR-DATABASE.bat          if the database file is damaged, sets it aside
+                               and restores the newest working backup.
+  HOW-TO-USE.html              step-by-step guide, including putting the
+                               site online.
+
+  For developers (npm scripts): dev, build, start, db:seed, db:migrate,
+  db:repair, db:generate, typecheck.
+
+
+-----------------------------------------------------------------------------
+6. PUTTING IT ONLINE (not done yet)
+-----------------------------------------------------------------------------
+
+  Designed for a host with a real server and a disk (e.g. Railway):
+    1. create a PostgreSQL database and set DATABASE_URL,
+    2. set ADMIN_EMAIL / ADMIN_PASSWORD / ADMIN_NAME / SITE_URL / UPLOAD_DIR,
+    3. build and start (the build sets up the database automatically),
+    4. point your domain at it.
+  Serverless hosts (like Vercel) would need the uploads moved to cloud
+  storage first (S3 / Cloudflare R2 / Vercel Blob).
+
+  Also available: a public read-only API at /api/v1 (projects, posts,
+  collections, settings) and write endpoints for signed-in users.
+
+
+-----------------------------------------------------------------------------
+7. HOW THE CODE IS ORGANISED (for reference)
+-----------------------------------------------------------------------------
+
+  portfolio/
+    app/                 pages and routes
+      (site)/            public site: home, projects/[slug], journal, about
+      admin/             the dashboard pages + its server actions
+      api/v1/            the API
+      uploads/[file]/    serves uploaded files
+      layout.tsx, globals.css (all public-site styles), sitemap, robots
+    components/          everything you see
+      PortfolioShell     keeps the 3D world alive across pages
+      PortfolioScene, ProjectWorld, ProjectCarousel, ProjectCard, GridFloor,
+      ProfilePortal, shaders/   → the 3D world and its effects
+      FilmLoader, Navigation, ProjectIndex, ProjectTransition, CustomCursor
+      ProjectCaseStudy, Gallery, Cards, Blocks → case-study pages
+      stories/SongsOfSaaja → the Figma-built page
+      EditorialPage      → journal/about shell
+      MusicPlayer        → background music
+      admin/             → dashboard forms and widgets
+    lib/                 logic without visuals
+      cms/               database, login/roles, saving rules, reading
+                         content, Markdown, SEO, file storage
+      motion, store, transitions, layout, track, textures, loading
+                         → how the 3D world moves and loads
+      gallery, cards, blocks, section-design, project-theme
+                         → how case-study sections are laid out
+      music              → which track plays where
+    drizzle/             database migrations
+    scripts/             seed, migrate, repair, build snapshot
+    data/                the original seed projects
+    public/              images shipped with the code
+    storage/uploads/     your uploaded files
+    .data/               your database + backups
+
+
+-----------------------------------------------------------------------------
+8. NOTES FOR A SIMPLER REBUILD
+-----------------------------------------------------------------------------
+
+These are just observations to help you decide. Nothing has been chosen.
+
+  The heaviest, most complex parts (most of the code and most of the
+  maintenance) are:
+    - the 3D film strip, grid floor, liquid cursor wake and chrome portal
+      (WebGL + custom shaders),
+    - the film-reel loader and the 3D ↔ page transitions,
+    - the section layout engine (many layouts, presets and "auto" rules),
+    - the full CMS: users and roles, sessions, API, media pipeline,
+      migrations, database file safety and backups,
+    - per-project Figma pages written by hand in code.
+
+  Things you rely on that any rebuild should keep or replace on purpose:
+    - your content: projects, case-study text and images, journal posts,
+      profile, testimonials/achievements, music tracks
+      (all exportable from the database and storage/uploads),
+    - working addresses for each project (and the /projects/wom redirect),
+    - the gameplay-video slot and music, if still wanted,
+    - SEO basics (titles, descriptions, share images, sitemap).
+
+  Questions worth answering before rebuilding:
+    - Do you still want a 3D home page, or a simple grid/list of projects?
+    - Do you need a dashboard, or would editing files (e.g. Markdown) or a
+      hosted CMS be enough?
+    - Should every case study follow one shared template, or should some
+      (like Songs of Saaja) stay hand-built from Figma?
+    - Where will it be hosted, and do you need a database at all?
+    - Keep Journal / About / testimonials / music / multiple users?
