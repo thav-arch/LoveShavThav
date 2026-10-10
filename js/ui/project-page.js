@@ -41,8 +41,8 @@ export function loadProjectPage(project) {
       const root = doc.querySelector(".cs");
       if (!root) throw new Error(`${project.page}: no <div class="cs"> found`);
       // images etc. keep working after the address bar changes to projects/<name>.html
-      root.querySelectorAll("[src], [poster]").forEach((el) => {
-        for (const a of ["src", "poster"]) if (el.hasAttribute(a)) el.setAttribute(a, abs(el.getAttribute(a)));
+      root.querySelectorAll("[src], [poster], [data-src]").forEach((el) => {
+        for (const a of ["src", "poster", "data-src"]) if (el.hasAttribute(a)) el.setAttribute(a, abs(el.getAttribute(a)));
       });
       const styles = [...doc.querySelectorAll('link[rel="stylesheet"]')].map((l) => l.getAttribute("href"));
       const script = doc.querySelector("script[data-page]")?.getAttribute("src");

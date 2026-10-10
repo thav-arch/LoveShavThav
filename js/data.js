@@ -40,7 +40,7 @@ window.SITE = {
       "subtitle": "Free-To-Play Experimental Game",
       "year": "2025",
       "accent": "#e85c26",
-      "page": null,
+      "page": "projects/elevator-empire.html",
       "thumbnail": "images/covers/elevator-empire.webp",
       "thumbnailSmall": "images/covers/elevator-empire-sm.webp"
     },

@@ -1,4 +1,4 @@
-/* Self-hosted fonts (latin subset) from Google Fonts: Inter Tight (site) and Marcellus SC (Songs of Saaja) */
+/* Self-hosted fonts (latin subset) from Google Fonts: Inter Tight (site), Marcellus SC (Songs of Saaja), Jersey 25 (Elevator Empire) */
 @font-face {
   font-family: "Inter Tight";
   font-style: normal;
@@ -12,4 +12,11 @@
   font-weight: 400;
   font-display: swap;
   src: url("../fonts/MarcellusSC.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Jersey 25";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/Jersey25.woff2") format("woff2");
 }

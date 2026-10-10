@@ -1,0 +1,345 @@
+/* Elevator Empire page.
+   The page is the Figma frame (1440 wide) scaled to the window: 1 unit = 1/1440 of the page width (--u).
+   Artwork = 16 WebP slices (images/elevator-empire/p00–p15). Text and videos are real HTML on top of them. */
+.ee {
+  --u: calc(min(100cqw, 2200px) / 1440);
+  --ease-ee: cubic-bezier(0.22, 1, 0.36, 1);
+  container-type: inline-size;
+  position: relative;
+  margin-inline: auto;
+  height: calc(15918 * var(--u));
+  background: #7ce7f4;
+  overflow-x: clip;
+  font-family: "Jersey 25", "Inter Tight", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ artwork */
+.ee-art {
+  position: absolute;
+  inset: 0;
+}
+.ee-p {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: calc(var(--i) * 1000 * var(--u));
+  height: calc(1000 * var(--u) + 1px); /* 1px overlap hides hairline seams between slices */
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* --------------------------------------------------------------------- text */
+.ee-text,
+.ee-videos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.ee-t {
+  position: absolute;
+  margin: 0;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  font-size: calc(var(--fs) * var(--u));
+  line-height: var(--lh, normal);
+  letter-spacing: var(--ls, 0.01em);
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: left;
+  transform: rotate(var(--rot, 0deg));
+  /* the Figma "outside" stroke: a double-width stroke painted under the fill */
+  -webkit-text-stroke: calc(var(--sw, 0) * 2 * var(--u)) var(--sc, transparent);
+  paint-order: stroke fill;
+  stroke-linejoin: round;
+}
+.ee-t.c {
+  text-align: center;
+}
+.ee-t.r {
+  text-align: right;
+}
+.ee-t.wrap {
+  white-space: pre-line;
+}
+.ee-t span {
+  -webkit-text-stroke: inherit;
+}
+
+/* reveal: the text rises into place as it enters the screen (class .in is added by js/pages/elevator-empire.js) */
+.ee.is-live .ee-t[data-r] {
+  opacity: 0;
+  translate: 0 calc(18 * var(--u));
+  transition:
+    opacity 0.9s var(--ease-ee),
+    translate 0.9s var(--ease-ee);
+  transition-delay: var(--d, 0s);
+}
+.ee.is-live .ee-t[data-r].in {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ------------------------------------------------------------ painted button */
+.ee-btn {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  border-radius: calc(var(--r) * var(--u));
+  transition:
+    transform 0.3s var(--ease-ee),
+    box-shadow 0.3s var(--ease-ee);
+}
+.ee-btn:hover {
+  transform: translateY(calc(-3 * var(--u))) scale(1.04);
+  box-shadow:
+    0 calc(10 * var(--u)) calc(24 * var(--u)) rgba(0, 0, 0, 0.3),
+    0 0 0 calc(3 * var(--u)) rgba(255, 224, 120, 0.8);
+}
+.ee-btn:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.ee-anchor {
+  position: absolute;
+  left: 0;
+  top: calc(var(--y) * var(--u));
+  width: 1px;
+  height: 1px;
+}
+
+/* ------------------------------------------------------------------- videos */
+.ee-vid {
+  position: absolute;
+  pointer-events: auto;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  border-radius: calc(var(--r) * var(--u));
+  overflow: hidden;
+  background: #000;
+  isolation: isolate;
+}
+.ee-vid video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+/* play / pause: the whole video is the button; the round glyph shows when paused and on hover */
+.ee-vplay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: #fff;
+}
+.ee-vplay svg {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 64px;
+  height: 64px;
+  padding: 18px;
+  border-radius: 50%;
+  fill: currentColor;
+  background: rgba(14, 12, 40, 0.58);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--ease-ee);
+}
+.ee-vplay .i-pause {
+  display: none;
+}
+.ee-vid[data-state="paused"] .ee-vplay svg,
+.ee-vid[data-state="idle"][data-manual] .ee-vplay svg {
+  opacity: 1;
+  transform: none;
+}
+.ee-vid[data-state="playing"]:hover .ee-vplay svg {
+  opacity: 0.85;
+  transform: none;
+}
+.ee-vid[data-state="playing"] .i-play,
+.ee-vid[data-state="playing"] .ee-vplay path.i-play {
+  display: none;
+}
+.ee-vid[data-state="playing"] .i-pause {
+  display: inline;
+}
+.ee-vplay:focus-visible {
+  outline: 3px solid #fcd442;
+  outline-offset: -3px;
+}
+.ee-vid[data-state="error"] .ee-vplay,
+.ee-vid[data-state="error"] .ee-vc {
+  display: none;
+}
+
+/* sound control: mute button + volume slider */
+.ee-vc {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  background: rgba(14, 12, 40, 0.62);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--ease-ee);
+}
+.ee-vid:hover .ee-vc,
+.ee-vid:focus-within .ee-vc,
+.ee-vid[data-controls] .ee-vc {
+  opacity: 1;
+  transform: none;
+}
+@media (hover: none) {
+  .ee-vc {
+    opacity: 1;
+    transform: none;
+  }
+}
+.ee-vmute {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: none;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+.ee-vmute:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.ee-vmute:focus-visible {
+  outline: 2px solid #fcd442;
+}
+.ee-vmute svg {
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+.ee-vmute[aria-pressed="true"] .i-on,
+.ee-vmute[aria-pressed="false"] .i-off {
+  display: none;
+}
+.ee-vvol {
+  width: 72px;
+  height: 20px;
+  accent-color: #fcd442;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------------- footer */
+.cs-content-story > .ee-foot {
+  margin: 0;
+  padding: 8vh var(--gutter) calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(90deg, #7be6f3, #33bbea);
+  color: #0f1a3a;
+  font-family: "Jersey 25", "Inter Tight", sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+}
+
+/* ---------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ee.is-live .ee-t[data-r] {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+  .ee-btn {
+    transition: none;
+  }
+}
+
+/* top bar: on this page the colours change from bright cyan to deep navy, so the buttons get their own backing
+   instead of the difference-blend used on the dark pages */
+.cs[data-theme="ee"] .cs-bar {
+  mix-blend-mode: normal;
+}
+.cs[data-theme="ee"] .cs-bar button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(14, 12, 40, 0.58);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: "Jersey 25", "Inter Tight", sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.06em;
+}
+
+/* small screens: the page is the desktop design scaled to fit the width (pinch-zoom to read the small print) —
+   keep the top bar compact and let the video controls shrink with their frame */
+.ee-vid {
+  container-type: inline-size;
+}
+@container (max-width: 240px) {
+  .ee-vvol {
+    display: none;
+  }
+  .ee-vc {
+    padding: 2px;
+    right: 6px;
+    bottom: 6px;
+  }
+  .ee-vplay svg {
+    width: 44px;
+    height: 44px;
+    padding: 12px;
+  }
+}
+@container (max-width: 130px) {
+  .ee-vmute {
+    width: 28px;
+    height: 28px;
+  }
+  .ee-vmute svg {
+    width: 18px;
+    height: 18px;
+  }
+  .ee-vplay svg {
+    width: 30px;
+    height: 30px;
+    padding: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .cs[data-theme="ee"] .cs-bar {
+    right: 0;
+    padding: 10px;
+  }
+  .cs[data-theme="ee"] .cs-bar button {
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+}
