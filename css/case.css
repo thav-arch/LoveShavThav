@@ -70,6 +70,57 @@
 .cs-content-story > .cs-adjacent {
   margin-top: 14vh;
 }
+/* Previous / Next project at the end of a case study (filled by js/adjacent.js) */
+.cs-adjacent {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 22vh;
+  border-top: 1px solid var(--line);
+}
+.cs-adj {
+  display: block;
+  text-align: left;
+  padding: 4vh 0;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: opacity 0.35s;
+}
+.cs-adj:hover {
+  opacity: 0.5;
+}
+.cs-adj:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 6px;
+}
+.cs-adj span {
+  display: block;
+  font: var(--ui);
+  letter-spacing: 0.09em;
+  text-transform: var(--ui-case, uppercase);
+  color: var(--ink-dim);
+  margin-bottom: 2vh;
+}
+.cs-adj strong {
+  display: block;
+  font-family: var(--font-display, inherit);
+  font-size: clamp(30px, 5.4vw, 96px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+}
+.cs-adj-next {
+  text-align: right;
+}
+@media (max-width: 600px) {
+  .cs-adjacent {
+    grid-template-columns: 1fr;
+  }
+  .cs-adj-next {
+    text-align: left;
+    border-top: 1px solid var(--line);
+  }
+}
 .cs-foot {
   display: flex;
   justify-content: space-between;

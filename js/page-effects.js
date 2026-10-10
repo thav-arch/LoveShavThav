@@ -1,6 +1,8 @@
 // Shared behaviour of the long editorial pages (case studies): smooth scrolling inside the page's own
 // scroll box (Lenis), subtle image parallax, edge drift, reveal-on-enter, close buttons.
 // Ported from components/useEditorialScroll.ts. Returns a function that undoes everything.
+import { fillAdjacent } from "./adjacent.js";
+
 export function editorialScroll(cs) {
   const content = cs.querySelector("[data-cs-content]");
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,9 +51,19 @@ export function editorialScroll(cs) {
   );
   cs.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
 
+  // Previous / Next project at the end of the page (js/adjacent.js)
+  fillAdjacent(cs).catch((e) => console.error("Could not build the previous / next links", e));
+
   // Close buttons: when the 3D home page loaded this page it listens for "project:close";
   // opened on its own, they simply go back to the home page.
   const onClick = (e) => {
+    // opened from the 3D home page: slide to the other project in place instead of loading a new page
+    const sw = e.target.closest("[data-switch]");
+    if (sw && !document.body.hasAttribute("data-standalone")) {
+      e.preventDefault();
+      document.dispatchEvent(new CustomEvent("project:switch", { detail: { slug: sw.dataset.switch, dir: Number(sw.dataset.dir) || 1 } }));
+      return;
+    }
     if (!e.target.closest("[data-action=close]")) return;
     if (document.body.hasAttribute("data-standalone")) location.href = "index.html";
     else document.dispatchEvent(new CustomEvent("project:close"));

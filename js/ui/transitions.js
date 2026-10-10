@@ -119,7 +119,7 @@ export function enterProject(slug, origin, fromEl) {
         const content = mountProjectPage(project);
         store.set({ mode: "PROJECT" });
         // (Forward re-opens an entry that already carries this project, so only push for a fresh open)
-        if (history.state?.project !== slug) history.pushState({ project: slug }, "", new URL(project.page, HOME_URL).href);
+        if (history.state?.project !== slug) history.pushState({ project: slug, depth: 1 }, "", new URL(project.page, HOME_URL).href);
         revealProject(content);
       } catch (e) {
         console.error("Could not open the project page", e);
@@ -215,4 +215,48 @@ export function exitProject(push = true) {
       resetOverlay();
       store.set({ transition: "idle" });
     });
+}
+
+/* ------------------------------------------- previous / next project, from inside a case study */
+
+/**
+ * The page slides out, the other project's page is fetched and slides in; behind it the 3D strip moves to
+ * that card, so closing lands on it. `push` is false when Back / Forward already changed the address.
+ * Ported from switchProject in lib/transitions.ts.
+ */
+export function switchProject(slug, dir = 1, push = true) {
+  const s = S();
+  const index = projectIndex(slug);
+  if (s.transition !== "idle" || s.mode !== "PROJECT" || index < 0 || slug === s.selectedSlug) return;
+  const project = projects[index];
+  if (!project.page) return;
+  store.set({ transition: "switching", direction: dir });
+  const page = loadProjectPage(project); // fetch while the old page leaves
+  const content = document.querySelector("[data-cs-content]");
+  const quick = motion.reducedMotion;
+  gsap.to(content, {
+    x: quick ? 0 : -dir * 90,
+    opacity: 0,
+    duration: quick ? 0.2 : 0.45,
+    ease: "power3.in",
+    onComplete: async () => {
+      try {
+        await page;
+      } catch (e) {
+        console.error("Could not open the project page", e);
+        gsap.to(content, { x: 0, opacity: 1, duration: 0.3 });
+        store.set({ transition: "idle" });
+        return;
+      }
+      motion.pos = motion.target = positionFor(index, motion.pos);
+      store.set({ activeIndex: index, selectedSlug: slug });
+      const next = mountProjectPage(project);
+      if (push) {
+        // depth = how many project pages deep we are, so Close can return straight to the 3D world
+        history.pushState({ project: slug, depth: (history.state?.depth || 1) + 1 }, "", new URL(project.page, HOME_URL).href);
+      }
+      gsap.fromTo(next, { x: quick ? 0 : dir * 90, opacity: 0 }, { x: 0, opacity: 1, duration: quick ? 0.2 : 0.7, ease: "power3.out", clearProps: "transform,opacity" });
+      store.set({ transition: "idle" });
+    },
+  });
 }

@@ -3,13 +3,13 @@
 import { onCursorLabel } from "./core/cursor.js";
 import { onReveal } from "./core/loading.js";
 import { motion } from "./core/motion.js";
-import { setProjects } from "./core/projects.js";
+import { projectIndex, setProjects } from "./core/projects.js";
 import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { startLoader } from "./ui/loader.js";
 import { initIndex } from "./ui/index-view.js";
 import { initNav } from "./ui/nav.js";
-import { enterProject, exitProject, playIntro, setMode } from "./ui/transitions.js";
+import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
 // js/data.js is fetched fresh on every visit (the ?v= stamp skips the browser cache), so after you publish an
 // edited project list visitors see it straight away instead of an old saved copy for up to 10 minutes
@@ -75,7 +75,8 @@ startLoader(document.querySelector(".fl"));
 // Closing a project steps back in history (so the Back button and Close behave the same);
 // if the project was never pushed there is nothing to step back to, so it just closes.
 const closeProject = () => {
-  if (history.state?.project) history.back();
+  // step back past every project page visited with Previous / Next, straight to the 3D world
+  if (history.state?.project) history.go(-(history.state.depth || 1));
   else exitProject(true);
 };
 // Escape steps back toward the world
@@ -87,13 +88,19 @@ addEventListener("keydown", (e) => {
 });
 // the Close button on a case study
 document.addEventListener("project:close", closeProject);
-// Back / Forward: close the open project, or re-open the one the history entry belongs to
+// Previous / Next at the end of a case study (js/adjacent.js)
+document.addEventListener("project:switch", (e) => switchProject(e.detail.slug, e.detail.dir));
+// Back / Forward: close the open project, re-open the one the history entry belongs to, or slide between projects
 addEventListener("popstate", () => {
   const s = store.state;
   if (s.transition !== "idle") return;
   const slug = history.state?.project;
   if (s.mode === "PROJECT" && !slug) exitProject(false);
   else if (s.mode !== "PROJECT" && slug) enterProject(slug, "index");
+  else if (s.mode === "PROJECT" && slug && slug !== s.selectedSlug) {
+    const dir = projectIndex(slug) > projectIndex(s.selectedSlug) ? 1 : -1;
+    switchProject(slug, dir, false);
+  }
 });
 
 window.__world = world; // handy for debugging in the console

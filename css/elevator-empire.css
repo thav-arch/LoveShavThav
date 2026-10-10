@@ -343,3 +343,31 @@
     font-size: 13px;
   }
 }
+
+/* Previous / Next project: sits on the same cyan as the end of the artwork */
+.cs-content-story > .ee-adj,
+.cs[data-theme="ee"] .cs-content-story > .cs-adjacent {
+  margin: 0;
+  padding: 10vh var(--gutter) 0;
+  background: linear-gradient(90deg, #7be6f3, #33bbea);
+  color: #0f1a3a;
+  border-top: 0;
+}
+.cs[data-theme="ee"] .cs-adj span {
+  color: rgba(15, 26, 58, 0.62);
+  font-family: "Jersey 25", "Inter Tight", sans-serif;
+  font-size: 20px;
+}
+.cs[data-theme="ee"] .cs-adj strong {
+  font-family: "Jersey 25", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: #fff;
+  -webkit-text-stroke: 6px #2d154e;
+  paint-order: stroke fill;
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+.cs[data-theme="ee"] .cs-adjacent + .ee-foot {
+  border-top: 1px solid rgba(15, 26, 58, 0.18);
+  margin-top: 0;
+}
