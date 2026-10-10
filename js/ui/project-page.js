@@ -35,7 +35,7 @@ export function loadProjectPage(project) {
   let p = loaded.get(project.slug);
   if (!p) {
     p = (async () => {
-      const res = await fetch(abs(project.page));
+      const res = await fetch(abs(project.page), { cache: "no-cache" }); // always check for a newer version of the page
       if (!res.ok) throw new Error(`${project.page}: ${res.status}`);
       const doc = new DOMParser().parseFromString(await res.text(), "text/html");
       const root = doc.querySelector(".cs");

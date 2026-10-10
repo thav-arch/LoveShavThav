@@ -11,6 +11,9 @@ import { initIndex } from "./ui/index-view.js";
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode } from "./ui/transitions.js";
 
+// js/data.js is fetched fresh on every visit (the ?v= stamp skips the browser cache), so after you publish an
+// edited project list visitors see it straight away instead of an old saved copy for up to 10 minutes
+await import(`./data.js?v=${Date.now()}`);
 const { projects, profile } = window.SITE;
 
 // The look of the 3D world — tune it here (values were set in the old dashboard's theme settings).
