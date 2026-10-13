@@ -41,8 +41,8 @@ window.SITE = {
       "year": "2025",
       "accent": "#e85c26",
       "page": "projects/elevator-empire.html",
-      "thumbnail": "images/covers/elevator-empire.webp?v=2",
-      "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=2",
+      "thumbnail": "images/covers/elevator-empire.webp?v=3",
+      "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=3",
       "aspect": 1.86
     },
     {
