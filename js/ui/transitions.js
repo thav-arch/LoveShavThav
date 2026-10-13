@@ -86,10 +86,14 @@ let soonTimer = 0;
 function showSoon(title) {
   const el = document.getElementById("soon");
   if (!el) return;
-  el.textContent = `${title} — case study coming soon`;
-  el.dataset.on = "";
+  const span = document.createElement("span");
+  const name = document.createElement("b");
+  name.textContent = title;
+  span.append(name, " — case study coming soon");
+  el.replaceChildren(span);
+  requestAnimationFrame(() => (el.dataset.on = ""));
   clearTimeout(soonTimer);
-  soonTimer = setTimeout(() => delete el.dataset.on, 2600);
+  soonTimer = setTimeout(() => delete el.dataset.on, 3200);
 }
 
 /**

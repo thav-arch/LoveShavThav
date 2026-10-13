@@ -402,23 +402,42 @@ html[data-scene-cursor="grabbing"] * {
 }
 
 /* "case study coming soon" note for projects without a page yet */
+/* "case study coming soon": a clear pill above the counter (a project without a page was clicked) */
 .soon {
   position: fixed;
   left: 0;
   right: 0;
-  bottom: calc(var(--gutter) + 46px);
+  bottom: calc(var(--gutter) + 54px);
   z-index: 7;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.soon span {
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: rgba(20, 20, 24, 0.78);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   font: var(--ui);
+  font-size: 12px;
   letter-spacing: 0.09em;
   text-transform: var(--ui-case, uppercase);
-  color: var(--dim);
+  color: rgba(255, 255, 255, 0.72);
   opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s var(--ease);
+  transform: translateY(8px);
+  transition:
+    opacity 0.45s var(--ease),
+    transform 0.45s var(--ease);
 }
-.soon[data-on] {
+.soon span b {
+  font-weight: 600;
+  color: #fff;
+}
+.soon[data-on] span {
   opacity: 1;
+  transform: none;
 }
 
 /* phones */

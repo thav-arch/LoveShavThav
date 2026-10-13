@@ -175,24 +175,24 @@ export function pathModel(L, pos = motion.pos) {
         data[i * 4 + 2] = -Math.sin(phi); // normal facing the camera (+z)
         data[i * 4 + 3] = Math.cos(phi);
     };
-    // integrate outward from s = 0 in both directions
+    // integrate outward from s = 0 in both directions, recording the point at every sample's exact
+    // arc length (s_i = -PATH_MAX + i·step), so all PATH_N samples are filled
     for (const dir of [1, -1]) {
         let x = 0;
         let z = 0;
         let s = 0;
-        for (let n = 0; n <= mid; n++) {
-            const i = Math.round(mid + dir * n);
-            if (n > 0) {
-                for (let k = 0; k < sub; k++) {
-                    const ds = (dir * step) / sub;
-                    const phi = heading(L, s + ds / 2);
-                    x += Math.cos(phi) * ds;
-                    z += Math.sin(phi) * ds;
-                    s += ds;
-                }
+        const first = dir > 0 ? Math.ceil(mid) : Math.floor(mid);
+        for (let i = first; i >= 0 && i < PATH_N; i += dir) {
+            const target = -PATH_MAX + i * step;
+            const n = Math.max(1, Math.ceil((Math.abs(target - s) * sub) / step));
+            const ds = (target - s) / n;
+            for (let k = 0; k < n; k++) {
+                const phi = heading(L, s + ds / 2);
+                x += Math.cos(phi) * ds;
+                z += Math.sin(phi) * ds;
+                s += ds;
             }
-            if (i >= 0 && i < PATH_N)
-                write(i, x, z, s);
+            write(i, x, z, s);
         }
     }
     // the centre frame sits at z = 0, square to the camera (no depth offset needed)
@@ -234,8 +234,7 @@ export function pickCard(ray, L, maxSlot = L.maxSlot) {
     const { x: ox, y: oy, z: oz } = ray.origin;
     const { x: dx, y: dy, z: dz } = ray.direction;
     const step = (2 * PATH_MAX) / (PATH_N - 1);
-    let bestT = Infinity;
-    let hitS = 0;
+    const hits = []; // [t, s] for every place the ray crosses the strip (seen from above)
     for (let i = 0; i < PATH_N - 1; i++) {
         const ax = data[i * 4];
         const az = data[i * 4 + 1];
@@ -249,25 +248,24 @@ export function pickCard(ray, L, maxSlot = L.maxSlot) {
         const wz = az - oz;
         const t = (wx * ez - wz * ex) / den;
         const q = (wx * dz - wz * dx) / den;
-        if (t > 0 && q >= 0 && q <= 1 && t < bestT) {
-            bestT = t;
-            hitS = -PATH_MAX + (i + q) * step;
-        }
+        if (t > 0 && q >= 0 && q <= 1)
+            hits.push([t, -PATH_MAX + (i + q) * step]);
     }
-    if (!Number.isFinite(bestT))
-        return null;
-    const hy = oy + dy * bestT;
+    hits.sort((a, b) => a[0] - b[0]);
     const arc = motion.arc;
-    let best = null;
-    for (let k = 0; k < INSTANCE_COUNT; k++) {
-        const slot = slotOf(k);
-        if (Math.abs(slot) > maxSlot || slot < -L.maxLeft)
-            continue;
-        const lu = (hitS - frameOffset(k, arc, L)) / frameWidth(k, L);
+    for (const [t, hitS] of hits) {
+        const hy = oy + dy * t;
         const lv = (hy - L.cardY) / L.cardH;
-        if (Math.abs(lu) <= 0.5 && Math.abs(lv) <= 0.5 && (!best || Math.abs(slot) < Math.abs(best.slot))) {
-            best = { k, slot, u: lu + 0.5, v: lv + 0.5 };
+        if (Math.abs(lv) > 0.5)
+            continue;
+        for (let k = 0; k < INSTANCE_COUNT; k++) {
+            const slot = slotOf(k);
+            if (slot > maxSlot || slot < -L.maxLeft)
+                continue;
+            const lu = (hitS - frameOffset(k, arc, L)) / frameWidth(k, L);
+            if (Math.abs(lu) <= 0.5)
+                return { k, slot, u: lu + 0.5, v: lv + 0.5 };
         }
     }
-    return best;
+    return null;
 }
