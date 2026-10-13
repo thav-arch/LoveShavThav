@@ -1,0 +1,7 @@
+# never convert line endings in these: they are binary files
+*.pdf binary
+*.mp4 binary
+*.webp binary
+*.png binary
+*.jpg binary
+*.woff2 binary
