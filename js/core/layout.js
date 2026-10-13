@@ -12,9 +12,9 @@ export function computeLayout(width, height) {
         // diag: angle (radians, seen from above) of the frames either side of the centre frame
         // corner: radius of the two folds next to the centre frame
         // maxSlot / maxLeft: how many frames show to the right (receding) / left (coming toward you)
-        desktop: { fov: 32, gap: 0.14, diag: 0.92, corner: 0.32, dolly: 1, fill: 0.52, widthShare: 0.56, fogStart: 3.5, fogSpan: 16, maxSlot: 3.4, maxLeft: 1.7, parallax: 1 },
-        tablet: { fov: 36, gap: 0.14, diag: 0.88, corner: 0.3, dolly: 1, fill: 0.46, widthShare: 0.66, fogStart: 3.2, fogSpan: 12, maxSlot: 2.8, maxLeft: 1.6, parallax: 0.6 },
-        mobile: { fov: 42, gap: 0.12, diag: 0.84, corner: 0.26, dolly: 1, fill: 0.4, widthShare: 0.74, fogStart: 3, fogSpan: 9, maxSlot: 2.2, maxLeft: 1.5, parallax: 0.25 },
+        desktop: { fov: 32, gap: 0.14, diag: 0.92, corner: 0.32, dolly: 1, fill: 0.52, widthShare: 0.56, fogStart: 3.5, fogSpan: 16, maxSlot: 3.4, maxLeft: 1.7, parallax: 0.35 },
+        tablet: { fov: 36, gap: 0.14, diag: 0.88, corner: 0.3, dolly: 1, fill: 0.46, widthShare: 0.66, fogStart: 3.2, fogSpan: 12, maxSlot: 2.8, maxLeft: 1.6, parallax: 0.25 },
+        mobile: { fov: 42, gap: 0.12, diag: 0.84, corner: 0.26, dolly: 1, fill: 0.4, widthShare: 0.74, fogStart: 3, fogSpan: 9, maxSlot: 2.2, maxLeft: 1.5, parallax: 0.1 },
     }[device];
     const fov = base.fov;
     const t = Math.tan((fov * Math.PI) / 360);
@@ -43,7 +43,8 @@ export function computeLayout(width, height) {
         fogFar: camZ + base.fogStart + base.fogSpan,
         maxSlot: base.maxSlot,
         maxLeft: base.maxLeft,
-        damping: device === "desktop" ? 6.5 : 8,
+        // how quickly the strip glides to its target (lower = smoother, longer glide)
+        damping: device === "desktop" ? 5 : 6,
         parallax: base.parallax,
     };
 }

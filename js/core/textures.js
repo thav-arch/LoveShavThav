@@ -17,14 +17,18 @@ function fallback(p) {
     c.width = 512;
     c.height = 320;
     const g = c.getContext("2d");
-    g.fillStyle = "#111";
+    // a calm gradient in the project colour (the title is printed on top by the card shader;
+    // fine stripes were dropped: they shimmered while the strip moved)
+    const grad = g.createLinearGradient(0, 0, c.width, c.height);
+    grad.addColorStop(0, p.accent || "#333");
+    grad.addColorStop(1, "#0d0d0d");
+    g.fillStyle = grad;
     g.fillRect(0, 0, c.width, c.height);
-    g.fillStyle = p.accent;
-    for (let i = 0; i < 26; i++)
-        g.fillRect((i * 37) % 512, 0, 2, 320);
-    g.fillStyle = "#fff";
-    g.font = "600 34px system-ui, sans-serif";
-    g.fillText(p.title, 24, 290);
+    const glow = g.createRadialGradient(c.width * 0.7, c.height * 0.3, 10, c.width * 0.7, c.height * 0.3, c.width * 0.7);
+    glow.addColorStop(0, "rgba(255,255,255,0.14)");
+    glow.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = glow;
+    g.fillRect(0, 0, c.width, c.height);
     return prepare(new THREE.CanvasTexture(c));
 }
 async function loadImage(url) {

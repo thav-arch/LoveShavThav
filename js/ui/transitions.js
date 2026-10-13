@@ -1,7 +1,7 @@
 // Transition orchestration, ported from lib/transitions.ts. Every state change goes through here, so the
 // WebGL scene (via `motion`) and the page (via the store and the #project-transition overlay) move together.
 // The Next.js router is replaced by a tiny history helper (see project-page.js).
-import { centreInstance, INSTANCE_COUNT, mod, motion, positionFor } from "../core/motion.js";
+import { centreInstance, motion, positionFor } from "../core/motion.js";
 import { projectIndex, projects } from "../core/projects.js";
 import * as store from "../core/store.js";
 import { isPortalMode } from "../core/store.js";
@@ -42,17 +42,15 @@ export function playIntro(skip = false) {
     store.set({ introDone: true });
     return;
   }
-  // the reel threads in from the right and glides to a stop on frame 01
-  motion.pos = -4.5;
-  motion.target = 0;
-  motion.dampOverride = 1.1;
+  // the reel glides in from the right and eases to a stop on frame 01 (eased at both ends: no jolt)
+  motion.pos = motion.target = -1.6;
+  gsap.to(motion, { pos: 0, target: 0, duration: 2.6, ease: "power3.inOut" });
   gsap.to(motion, {
     intro: 1,
-    duration: 3.2,
+    duration: 3,
     ease: "power2.out",
     onComplete: () => store.set({ introDone: true }),
   });
-  gsap.delayedCall(2.8, () => (motion.dampOverride = 0));
 }
 
 /* ----------------------------------------------------- world-level modes */
@@ -133,15 +131,15 @@ export function enterProject(slug, origin, fromEl) {
   });
 
   if (origin === "world") {
-    motion.target = positionFor(index, motion.pos);
-    motion.flyInstance = mod(motion.target, INSTANCE_COUNT);
+    motion.target = positionFor(index);
+    motion.flyInstance = motion.target;
     gsap.set(el, { autoAlpha: 1, clipPath: FULL });
     gsap.set(white, { opacity: 0 });
     gsap.set(media, { opacity: 0 });
     tl.to(motion, { fly: 1, duration: motion.reducedMotion ? 0.4 : 1.25, ease: "expo.inOut" }, 0).to(white, { opacity: 1, duration: 0.4, ease: "power1.in" }, motion.reducedMotion ? 0.2 : 0.95);
   } else {
     // keep the 3D world in sync so closing returns to this project
-    motion.pos = motion.target = positionFor(index, motion.pos);
+    motion.pos = motion.target = positionFor(index);
     const r = fromEl?.getBoundingClientRect() ?? new DOMRect(innerWidth * 0.35, innerHeight * 0.35, innerWidth * 0.3, innerHeight * 0.3);
     if (project.thumbnail) media.src = project.thumbnail;
     gsap.set(el, {
@@ -192,7 +190,7 @@ export function exitProject(push = true) {
   const tl = gsap.timeline();
   tl.fromTo(el, { autoAlpha: push ? 0 : 1 }, { autoAlpha: 1, duration: push ? 0.45 : 0.01, ease: "power2.inOut" })
     .add(() => {
-      motion.pos = motion.target = positionFor(index, motion.pos);
+      motion.pos = motion.target = positionFor(index);
       motion.vel = 0;
       motion.flyInstance = centreInstance();
       motion.fly = 1;
@@ -248,7 +246,7 @@ export function switchProject(slug, dir = 1, push = true) {
         store.set({ transition: "idle" });
         return;
       }
-      motion.pos = motion.target = positionFor(index, motion.pos);
+      motion.pos = motion.target = positionFor(index);
       store.set({ activeIndex: index, selectedSlug: slug });
       const next = mountProjectPage(project);
       if (push) {

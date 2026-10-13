@@ -19,7 +19,7 @@ const { projects, profile } = window.SITE;
 // The look of the 3D world — tune it here (values were set in the old dashboard's theme settings).
 Object.assign(motion.theme, {
   gridHue: 0, // 0–1: rotates the glowing grid's colour
-  gridIntensity: 0.55, // 0 hides the floor grid, 1 = full glow
+  gridIntensity: 0, // the moving floor grid caused motion sickness: off (0). 0.55 brings it back
   cursorWake: true, // the liquid ripple that follows the cursor
   wakeStrength: 0.006,
   cardRadius: 0.045, // rounded corners of the film frames

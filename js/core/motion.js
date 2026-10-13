@@ -9,20 +9,18 @@ import { onProjectsChange, projects } from "./projects.js";
  * Counts are live bindings: they follow the published projects from the CMS.
  */
 export let PROJECT_COUNT = 1;
-/** the track repeats the projects so the arc is always full and loops seamlessly */
-export let COPIES = 2;
-export let INSTANCE_COUNT = 2;
+/** one frame per project: the strip has a first and a last project and does not loop */
+export let INSTANCE_COUNT = 1;
 function recount() {
     PROJECT_COUNT = Math.max(1, projects.length);
-    COPIES = Math.max(2, Math.ceil(10 / PROJECT_COUNT));
-    INSTANCE_COUNT = projects.length ? PROJECT_COUNT * COPIES : 0;
+    INSTANCE_COUNT = projects.length ? PROJECT_COUNT : 0;
 }
 recount();
 onProjectsChange(recount);
 export const motion = {
     layout: computeLayout(1440, 900),
     viewport: { w: 1440, h: 900 },
-    /** carousel position in "card" units: 0 = instance 0 centred. Unbounded (loops). */
+    /** carousel position in "card" units: 0 = first project centred, PROJECT_COUNT - 1 = last */
     pos: 0,
     target: 0,
     /** current position along the film strip in world units (derived from pos) */
@@ -70,11 +68,12 @@ export const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 /** frame-rate independent exponential smoothing */
 export const damp = (a, b, lambda, dt) => a + (b - a) * (1 - Math.exp(-lambda * dt));
 export const projectAtInstance = (k) => mod(k, PROJECT_COUNT);
-export const activeProjectIndex = () => mod(Math.round(motion.pos), PROJECT_COUNT);
-/** the instance currently nearest the centre */
-export const centreInstance = () => mod(Math.round(motion.pos), INSTANCE_COUNT);
-/** shortest carousel position that centres project `index` from the current position */
-export function positionFor(index, from = motion.target) {
-    const base = Math.round(from);
-    return base + wrapSigned(index - mod(base, PROJECT_COUNT), PROJECT_COUNT);
+/** the strip stops at the first and last project: clamp a position into that range */
+export const clampPos = (p) => clamp(p, 0, PROJECT_COUNT - 1);
+export const activeProjectIndex = () => clampPos(Math.round(motion.pos));
+/** the frame currently nearest the centre */
+export const centreInstance = () => clampPos(Math.round(motion.pos));
+/** carousel position that centres project `index` */
+export function positionFor(index) {
+    return clampPos(index);
 }

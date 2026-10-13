@@ -3,7 +3,7 @@
 // same geometry, shaders, constants and per-frame maths — only the React wrappers are gone.
 import * as THREE from "three";
 import { portalMetrics, PORTAL_TUBE, visibleHeight, computeLayout } from "../core/layout.js";
-import { activeProjectIndex, clamp, damp, INSTANCE_COUNT, motion, projectAtInstance } from "../core/motion.js";
+import { activeProjectIndex, clamp, clampPos, damp, INSTANCE_COUNT, motion, PROJECT_COUNT, projectAtInstance } from "../core/motion.js";
 import { projects } from "../core/projects.js";
 import { setSceneCursor } from "../core/cursor.js";
 import { loading } from "../core/loading.js";
@@ -315,7 +315,9 @@ export function createWorld(container, { openProject }) {
     const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * unit;
     // never let the reel run more than ~1.5 frames ahead: a fast flick glides instead of racing
-    motion.target = clamp(motion.target + clamp(d / 420, -0.6, 0.6), motion.pos - 1.5, motion.pos + 1.5);
+    motion.target = clamp(motion.target + clamp(d / 520, -0.45, 0.45), motion.pos - 1.2, motion.pos + 1.2);
+    // the strip ends at the first / last project: only a hint of give past the ends
+    motion.target = clamp(motion.target, -0.08, PROJECT_COUNT - 1 + 0.08);
     motion.lastInput = performance.now();
     motion.interaction = "wheel";
   };
@@ -348,7 +350,9 @@ export function createWorld(container, { openProject }) {
     lastT = now;
     moved = Math.max(moved, Math.abs(e.clientX - startX));
     pxVel = pxVel * 0.65 + (dx / dt) * 0.35;
-    motion.target -= dx / pxPerCard();
+    // past the first / last project the strip resists (rubber band) and springs back on release
+    const out = motion.target < 0 || motion.target > PROJECT_COUNT - 1;
+    motion.target = clamp(motion.target - (dx / pxPerCard()) * (out ? 0.3 : 1), -0.35, PROJECT_COUNT - 1 + 0.35);
     motion.lastInput = now;
     if (moved > 6) {
       motion.interaction = "drag";
@@ -366,12 +370,12 @@ export function createWorld(container, { openProject }) {
       const hit = pickAtPointer();
       if (!hit || store.state.mode !== "WORLD") return;
       if (Math.abs(hit.slot) < 0.5) openProject(projects[projectAtInstance(hit.k)].slug, "world");
-      else motion.target = Math.round(motion.pos + hit.slot);
+      else motion.target = clampPos(Math.round(motion.pos + hit.slot));
       return;
     }
     // release with inertia, then settle on the nearest card
     if (now - lastT > 90) pxVel = 0;
-    motion.target = Math.round(motion.target - clamp((pxVel * 0.2) / pxPerCard(), -2, 2));
+    motion.target = clampPos(Math.round(motion.target - clamp((pxVel * 0.2) / pxPerCard(), -2, 2)));
     motion.interaction = "idle";
     motion.lastInput = now;
     setSceneCursor(null);
@@ -381,8 +385,10 @@ export function createWorld(container, { openProject }) {
   };
   const onKey = (e) => {
     if (!canScroll() || e.target?.closest?.("input, textarea")) return;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") motion.target = Math.round(motion.target) + 1;
-    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") motion.target = Math.round(motion.target) - 1;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") motion.target = clampPos(Math.round(motion.target) + 1);
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") motion.target = clampPos(Math.round(motion.target) - 1);
+    else if (e.key === "Home") motion.target = 0;
+    else if (e.key === "End") motion.target = PROJECT_COUNT - 1;
     else if (e.key === "Enter" && store.state.mode === "WORLD" && !e.target?.closest?.("button, a")) openProject(projects[activeProjectIndex()].slug, "world");
   };
   addEventListener("wheel", onWheel, { passive: true });
@@ -489,7 +495,7 @@ export function createWorld(container, { openProject }) {
     // settle onto the nearest card once input stops
     if (!motion.dragging && motion.interaction === "wheel" && now - motion.lastInput > 160) {
       // biased toward the scroll direction so one deliberate notch always advances a card
-      motion.target = Math.round(motion.target + 0.28 * Math.sign(motion.target - motion.pos));
+      motion.target = clampPos(Math.round(motion.target + 0.28 * Math.sign(motion.target - motion.pos)));
       motion.interaction = "idle";
     }
     const prev = motion.pos;

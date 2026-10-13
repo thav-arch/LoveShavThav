@@ -1,6 +1,6 @@
 // Ported from lib/track.ts (types stripped; logic unchanged)
 import * as THREE from "three";
-import { INSTANCE_COUNT, mod, motion, projectAtInstance, wrapSigned } from "./motion.js";
+import { INSTANCE_COUNT, mod, motion, projectAtInstance } from "./motion.js";
 import { projects } from "./projects.js";
 /**
  * The film strip on a diagonal (landing-page redesign, Oct 2026).
@@ -27,13 +27,13 @@ import { projects } from "./projects.js";
  * The vertex shader (world/shader-card.js) samples the same table from a texture.
  */
 export const BULGE = 0.035; // frames stay almost flat — the rollers do the bending
-export const WAVE = 0.12; // velocity-driven travelling wave along the strip
+export const WAVE = 0.035; // velocity-driven travelling wave along the strip (kept small: motion comfort)
 export const WAVE_FREQ = 0.85;
-export const FOLD = 0.07; // velocity-driven twist of each frame (film being pulled)
-export const BILLOW = 0.04; // frames puff out a little while moving fast
+export const FOLD = 0.025; // velocity-driven twist of each frame (film being pulled)
+export const BILLOW = 0.012; // frames puff out a little while moving fast
 const DEFAULT_ASPECT = 1.6;
-/** signed slot of an instance relative to the centre (0 = centre frame) */
-export const slotOf = (k, pos = motion.pos) => wrapSigned(k - pos, INSTANCE_COUNT);
+/** signed slot of a frame relative to the centre (0 = centre frame, negative = left / earlier projects) */
+export const slotOf = (k, pos = motion.pos) => k - pos;
 let model = { key: "", centers: [], widths: [], total: 1 };
 /** frame centres along the strip (arc length), recomputed when content/layout change */
 export function stripModel(L) {
@@ -74,7 +74,7 @@ export function arcAt(pos, L) {
 export function frameOffset(k, arc, L) {
     const m = stripModel(L);
     // film tension: while moving, frames spread slightly away from the near roller
-    return wrapSigned(m.centers[k] - arc, m.total) * motion.spread;
+    return (m.centers[k] - arc) * motion.spread;
 }
 /* ------------------------------------------------------------ the path */
 /** samples in the arc-length lookup table (also the shader texture width) */
