@@ -116,6 +116,7 @@ export function startIntro({ profile, images, onDone }) {
   let done = false;
 
   const frame = (now) => {
+    lenis?.raf(now); // Lenis only moves the scroller when it is ticked every frame
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const time = now / 1000;
