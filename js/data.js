@@ -41,8 +41,9 @@ window.SITE = {
       "year": "2025",
       "accent": "#e85c26",
       "page": "projects/elevator-empire.html",
-      "thumbnail": "images/covers/elevator-empire.webp",
-      "thumbnailSmall": "images/covers/elevator-empire-sm.webp"
+      "thumbnail": "images/covers/elevator-empire.webp?v=2",
+      "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=2",
+      "aspect": 1.86
     },
     {
       "slug": "farmville-2-event-design",
