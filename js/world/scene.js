@@ -310,8 +310,10 @@ export function createWorld(container, { openProject }) {
   const canScroll = () => store.state.transition === "idle" && (store.state.mode === "WORLD" || store.isPortalMode(store.state.mode));
   const pxPerCard = () => motion.layout.pitch * basePx();
 
+  // while the intro or the welcome screen is up, scrolling belongs to them
+  const overlayUp = () => document.documentElement.hasAttribute("data-intro") || document.documentElement.hasAttribute("data-welcome");
   const onWheel = (e) => {
-    if (!canScroll()) return;
+    if (overlayUp() || !canScroll()) return;
     const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? innerHeight : 1;
     const d = (Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY) * unit;
     // never let the reel run more than ~1.5 frames ahead: a fast flick glides instead of racing
@@ -384,8 +386,8 @@ export function createWorld(container, { openProject }) {
     motion.pointer.inside = false;
   };
   const onKey = (e) => {
-    // the scroll intro (js/ui/intro.js) has the keyboard while it plays
-    if (document.documentElement.hasAttribute("data-intro")) return;
+    // the scroll intro / welcome screen have the keyboard while they are up
+    if (overlayUp()) return;
     if (!canScroll() || e.target?.closest?.("input, textarea")) return;
     if (e.key === "ArrowRight" || e.key === "ArrowDown") motion.target = clampPos(Math.round(motion.target) + 1);
     else if (e.key === "ArrowLeft" || e.key === "ArrowUp") motion.target = clampPos(Math.round(motion.target) - 1);
@@ -696,8 +698,22 @@ export function createWorld(container, { openProject }) {
   };
   raf = requestAnimationFrame(frame);
 
+  // where the centre frame is on screen (CSS px), for the description shown above it (js/ui/focus-desc.js)
+  const cr1 = new THREE.Vector3();
+  const cr2 = new THREE.Vector3();
+  const centreRect = () => {
+    const L = motion.layout;
+    const w = frameWidth(activeProjectIndex(), L);
+    cr1.set(-w / 2, L.cardY + L.cardH / 2, 0).project(camera);
+    cr2.set(w / 2, L.cardY - L.cardH / 2, 0).project(camera);
+    const W = motion.viewport.w;
+    const H = motion.viewport.h;
+    return { left: ((cr1.x + 1) / 2) * W, top: ((1 - cr1.y) / 2) * H, right: ((cr2.x + 1) / 2) * W, bottom: ((1 - cr2.y) / 2) * H };
+  };
+
   return {
     canvas,
+    centreRect,
     dispose() {
       running = false;
       cancelAnimationFrame(raf);

@@ -3,7 +3,9 @@
 //   2. with every scroll they lift, resize and relocate — each on its own curved path, with its own weight
 //   3. they gather into a ring around the name
 //   4. a vortex opens inside the ring, the ring spins up and the pieces fall in one after another
-//   5. the camera dives through the vortex; its dark core spreads to black and the 3D strip glides in
+//   5. the camera dives through the vortex and its dark core spreads to black
+//   6. on the black, a few lines appear one at a time — the first ones messy, scattered letters, each next
+//      one more ordered — then the page hands over to the "Welcome to my portfolio" screen (js/main.js)
 //
 // Web-friendly by design: cards move with transforms / opacity only (CSS 3D), images are small (≈20 KB
 // each), the vortex is ONE small WebGL canvas drawn at reduced resolution and only while it is visible,
@@ -43,10 +45,12 @@ const TILT = [[6, -10], [-8, 12], [4, 9], [-6, -8], [10, 6], [-4, -12], [8, -6],
 const RATE = [7.5, 10.5, 8.5, 12, 9, 11, 7, 10]; // higher = lighter / quicker to settle
 const BOW = [70, -90, 60, -50, 100, -70, 80, -60]; // sideways bulge of each path (storyboard units)
 
-// scroll timeline (0 → 1 over the intro's scroll length)
-const T = { hold: 0.08, drift: 0.3, ring: 0.52, open: 0.62, pull: 0.86 };
+// scroll timeline (0 → 1 over the intro's scroll length): the portal part, then the lines
+const T = { hold: 0.045, drift: 0.17, ring: 0.29, open: 0.345, pull: 0.48 };
+const DIVE_END = 0.55; // the vortex has faded to black
+const LINES = [0.57, 0.975]; // the story lines play between these points
 
-export function startIntro({ profile, images, onDone }) {
+export function startIntro({ profile, images, lines = [], onDone }) {
   const html = document.documentElement;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!html.hasAttribute("data-intro") || reduced) {
@@ -74,6 +78,7 @@ export function startIntro({ profile, images, onDone }) {
       <p class="it-roles">${profile.roles.map((r) => `<span>${esc(r)}</span>`).join("")}</p>
       <p class="it-line">${esc(profile.intro)}</p>
     </div>
+    <div class="intro-story">${lines.map((l) => `<p class="is-line">${l.split(" ").map((w) => `<span class="w">${[...w].map((ch) => `<span class="ch">${esc(ch)}</span>`).join("")}</span>`).join(" ")}</p>`).join("")}</div>
     <div class="intro-hint" aria-hidden="true"><span>Scroll</span><i></i></div>
     <button class="intro-skip" type="button">Skip intro</button>`;
   document.body.append(scroller, stage);
@@ -82,6 +87,18 @@ export function startIntro({ profile, images, onDone }) {
   const line = stage.querySelector(".it-line");
   const hint = stage.querySelector(".intro-hint");
   const cssVortex = stage.querySelector(".intro-vortex-css");
+  // the story lines: every letter gets its own scatter (seeded, so it is the same on every visit)
+  const story = [...stage.querySelectorAll(".is-line")].map((el, j, all) => {
+    const mess = all.length > 1 ? 1 - j / (all.length - 1) : 0; // first line the messiest, last line orderly
+    const letters = [...el.querySelectorAll(".ch")].map((ch, q) => {
+      const r = (m) => {
+        const x = Math.sin((j + 1) * 12.9898 + q * 78.233 + m * 37.719) * 43758.5453;
+        return (x - Math.floor(x)) * 2 - 1;
+      };
+      return { ch, dx: r(1) * 120, dy: r(2) * 70, rot: r(3) * 50 };
+    });
+    return { el, mess, letters, on: false };
+  });
   scroller.focus({ preventScroll: true });
 
   /* ------------------------------------------------------- smooth scroll */
@@ -278,7 +295,7 @@ export function startIntro({ profile, images, onDone }) {
     // vortex: opens inside the ring, grows while pulling in, then fills the screen and fades to black
     const open = smooth(T.ring - 0.06, T.open, p);
     const pull = smooth(T.open, T.pull, p);
-    const dive = smooth(T.pull - 0.02, 1, p);
+    const dive = smooth(T.pull - 0.02, DIVE_END, p);
     const size = open * (1 + 0.3 * pull) + 7 * Math.pow(dive, 2.2);
     const bright = open * (1 - smooth(0.3, 0.97, dive));
     if (vortex) vortex.draw(time, size, bright, pull, pulse, dive);
@@ -287,7 +304,33 @@ export function startIntro({ profile, images, onDone }) {
       cssVortex.style.transform = `translate(-50%, -50%) scale(${0.2 + size}) rotate(${time * 40}deg)`;
     }
 
-    if (!finishing && p > 0.93) finish(false);
+    // the story: one line at a time; letters fly from their scatter into place (more scatter for early lines)
+    const nL = story.length;
+    const local = nL ? ((p - LINES[0]) / (LINES[1] - LINES[0])) * nL : -1;
+    story.forEach((L, j) => {
+      const t = local - j; // 0 → 1 while this line is current
+      const visible = t > -0.05 && (t < 1.05 || j === nL - 1);
+      if (!visible) {
+        if (L.on) {
+          L.el.style.opacity = "0";
+          L.on = false;
+        }
+        return;
+      }
+      L.on = true;
+      const inn = smooth(0, 0.42, t);
+      const out = j === nL - 1 ? 0 : smooth(0.72, 1, t);
+      const settle = easeOut(clamp(t / 0.55));
+      L.el.style.opacity = String(inn * (1 - out));
+      L.el.style.transform = `translate3d(-50%, calc(-50% + ${(1 - inn) * 18 - out * 26}px), 0)`;
+      // messy lines keep a little restlessness even once assembled
+      const spread = Math.max(0, L.mess * (1 - settle) + 0.06 * L.mess * Math.sin(time * 0.8 + j));
+      for (const c of L.letters) {
+        c.ch.style.transform = spread > 0.001 ? `translate3d(${c.dx * spread}px, ${c.dy * spread}px, 0) rotate(${c.rot * spread}deg)` : "";
+      }
+    });
+
+    if (!finishing && p > 0.985) finish(false);
     raf = requestAnimationFrame(frame);
   };
   raf = requestAnimationFrame(frame);
@@ -305,7 +348,7 @@ export function startIntro({ profile, images, onDone }) {
         sessionStorage.setItem(SEEN, "1");
       } catch {}
       html.removeAttribute("data-intro");
-      onDone(); // the 3D strip starts gliding in behind the black
+      onDone({ skipped: skip }); // js/main.js shows the welcome screen (or, when skipped, the strip)
       gsap.to(stage, {
         opacity: 0,
         duration: skip ? 0.5 : 0.8,
@@ -324,7 +367,7 @@ export function startIntro({ profile, images, onDone }) {
     if (skip) return end();
     const s = { p };
     forced = p;
-    gsap.to(s, { p: 1, duration: (1.2 * (1 - p)) / 0.07 + 0.4, ease: "power1.in", onUpdate: () => (forced = s.p), onComplete: end });
+    gsap.to(s, { p: 1, duration: 0.5, ease: "power1.out", onUpdate: () => (forced = s.p), onComplete: end });
   }
   stage.querySelector(".intro-skip").addEventListener("click", () => finish(true));
   addEventListener("keydown", function onEsc(e) {

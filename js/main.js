@@ -7,14 +7,15 @@ import { projectIndex, setProjects } from "./core/projects.js";
 import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { initIndex } from "./ui/index-view.js";
-import { startIntro } from "./ui/intro.js?v=20261014d"; // version-tagged: changes often
+import { initFocusDesc } from "./ui/focus-desc.js";
+import { startIntro } from "./ui/intro.js?v=20261014e"; // version-tagged: changes often
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
 // js/data.js is fetched fresh on every visit (the ?v= stamp skips the browser cache), so after you publish an
 // edited project list visitors see it straight away instead of an old saved copy for up to 10 minutes
 await import(`./data.js?v=${Date.now()}`);
-const { projects, profile } = window.SITE;
+const { projects, profile, intro: introText = {} } = window.SITE;
 
 // The look of the 3D world — tune it here (values were set in the old dashboard's theme settings).
 Object.assign(motion.theme, {
@@ -83,14 +84,19 @@ loading.subscribe(tryReveal);
 if (document.documentElement.hasAttribute("data-intro")) motion.paused = true;
 startIntro({
   profile,
+  lines: introText.lines || [],
   // the pieces of work that gather into the portal: project covers + a few shots from the case studies
   images: (() => {
     const c = Object.fromEntries(projects.filter((p) => p.thumbnailSmall).map((p) => [p.slug, p.thumbnailSmall]));
     return [c["songs-of-saaja"], c["dabba-rush"], c["umbrella-man"], "images/intro/elevator-lobby.webp", c["farmville-2-event-design"], "images/intro/saaja-environment.webp", c["elevator-empire"], "images/intro/saaja-keyart.webp"].filter(Boolean);
   })(),
-  onDone: () => {
-    introDone = true;
-    tryReveal();
+  onDone: ({ skipped } = {}) => {
+    const go = () => {
+      introDone = true;
+      tryReveal();
+    };
+    if (skipped || !introText.welcome) go();
+    else showWelcome(introText.welcome, go);
   },
 });
 
@@ -127,3 +133,40 @@ addEventListener("popstate", () => {
 });
 
 window.__world = world; // handy for debugging in the console
+
+// "Welcome to my portfolio": shown after the intro until the first scroll / swipe / key / click,
+// then the 3D strip glides in. Navigation stays usable (opening Full / Profile also dismisses it).
+function showWelcome(text, next) {
+  const el = document.querySelector(".welcome");
+  const root = document.documentElement;
+  if (!el) return next();
+  el.querySelector(".wl-title").textContent = text;
+  el.hidden = false;
+  root.setAttribute("data-welcome", "");
+  window.gsap.fromTo(el.children, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", stagger: 0.12 });
+  let gone = false;
+  const leave = (e) => {
+    if (gone) return;
+    if (e?.type === "keydown" && !["ArrowDown", "ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) return;
+    if (e?.type === "wheel") e.preventDefault();
+    gone = true;
+    cleanup();
+    root.removeAttribute("data-welcome");
+    window.gsap.to(el.children, { opacity: 0, y: -18, duration: 0.6, ease: "power2.in", onComplete: () => (el.hidden = true) });
+    next();
+  };
+  const unsub = store.subscribe((s) => s.mode !== "WORLD" && leave());
+  const cleanup = () => {
+    el.removeEventListener("wheel", leave);
+    el.removeEventListener("pointerdown", leave);
+    el.removeEventListener("touchmove", leave);
+    removeEventListener("keydown", leave);
+    unsub?.();
+  };
+  el.addEventListener("wheel", leave, { passive: false });
+  el.addEventListener("pointerdown", leave);
+  el.addEventListener("touchmove", leave, { passive: true });
+  addEventListener("keydown", leave);
+}
+
+initFocusDesc(world, projects);

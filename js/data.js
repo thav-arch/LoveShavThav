@@ -1,9 +1,12 @@
 // Site content. Edit the text here; add a project by adding an entry (and a page, see README.md).
+// "description" is the two-line text shown above a project when it is in focus on the 3D strip (empty = none).
+// "intro" holds the lines that appear one by one after the portal, and the welcome line that follows them.
 window.SITE = {
   "projects": [
     {
       "slug": "songs-of-saaja",
       "title": "Songs of Saaja",
+      "description": "A 3D narrative exploration game rooted in Gond folklore, where a young woman enters a living forest to uncover forgotten stories, cultural memory and her place within them.",
       "subtitle": "Narrative 3D Adventure",
       "year": "2026",
       "accent": "#4c603e",
@@ -15,6 +18,7 @@ window.SITE = {
     {
       "slug": "dabba-rush",
       "title": "Dabba Rush",
+      "description": "A cycle delivery rider weaves through village roads in 2D, balancing stacked dabbas, dodging obstacles and racing to reach every delivery on time.",
       "subtitle": "2D Physics Side Scroller / Delivery Game",
       "year": "2025",
       "accent": "#b15400",
@@ -26,6 +30,7 @@ window.SITE = {
     {
       "slug": "umbrella-man",
       "title": "The Umbrella Man",
+      "description": "A narrative game built from hand-made stop-motion frames.",
       "subtitle": "Concept Game Trailer",
       "year": "2025",
       "accent": "#96bae6",
@@ -37,6 +42,7 @@ window.SITE = {
     {
       "slug": "elevator-empire",
       "title": "Elevator Empire",
+      "description": "A 2D casual simulation set in urban India: as the building manager you keep the lifts moving, balancing passenger flow, energy and time pressure.",
       "subtitle": "Free-To-Play Experimental Game",
       "year": "2025",
       "accent": "#e85c26",
@@ -48,6 +54,7 @@ window.SITE = {
     {
       "slug": "farmville-2-event-design",
       "title": "Farmville 2 - Country Escape",
+      "description": "Live-ops event design for FarmVille 2, focused on retention and player progression.",
       "subtitle": "Live-Ops Event Design",
       "year": "2026",
       "accent": "#537040",
@@ -59,6 +66,7 @@ window.SITE = {
     {
       "slug": "dashboards-and-ui",
       "title": "Dashboards and UI",
+      "description": "",
       "subtitle": "Multiple Brand Database Dashboard Design",
       "year": "2024-2025",
       "accent": "#888888",
@@ -69,6 +77,7 @@ window.SITE = {
     {
       "slug": "powerui-library",
       "title": "PowerUI Library",
+      "description": "",
       "subtitle": "Dashboard Asset Library Product",
       "year": "2024",
       "accent": "#888888",
@@ -77,6 +86,16 @@ window.SITE = {
       "thumbnailSmall": null
     }
   ],
+  "intro": {
+    "lines": [
+      "Every idea starts as a mess.",
+      "Fragments. Sketches. Half-built worlds.",
+      "I pull them apart, play with them, break them.",
+      "And slowly, a structure appears.",
+      "Systems you can feel. Stories you can play."
+    ],
+    "welcome": "Welcome to my portfolio"
+  },
   "profile": {
     "name": "Thavanesh Nagarajan",
     "roles": [

@@ -21,7 +21,7 @@ html[data-intro] .nav {
   display: none;
 }
 .intro-track {
-  height: 650vh; /* the length of the intro in scrolling */
+  height: 1250vh; /* the length of the intro in scrolling (portal ≈ first half, lines ≈ second half) */
 }
 
 .intro-stage {
@@ -143,6 +143,38 @@ html[data-intro] .nav {
   line-height: 1.45;
   color: rgba(255, 255, 255, 0.72);
   opacity: 0;
+}
+
+/* the story lines after the portal: one at a time, letters assemble into place */
+.intro-story {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.is-line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(88vw, 980px);
+  margin: 0;
+  text-align: center;
+  color: #fff;
+  font-family: var(--font);
+  font-weight: 500;
+  font-size: clamp(26px, 4vw, 60px);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  opacity: 0;
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform, opacity;
+}
+.is-line .w {
+  display: inline-block;
+  white-space: nowrap;
+}
+.is-line .ch {
+  display: inline-block;
 }
 
 /* scroll cue */
