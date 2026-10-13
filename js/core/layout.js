@@ -2,25 +2,27 @@
 export function computeLayout(width, height) {
     const aspect = width / Math.max(1, height);
     const device = width < 700 ? "mobile" : width < 1100 || aspect < 1.15 ? "tablet" : "desktop";
-    // a wider lens, closer in: the near fold looms and the far fold falls away
-    // (centre frame's far edge ≈ 60% of its near edge, like a dolly-in shot)
-    const fov = device === "mobile" ? 50 : 58;
+    // a longer lens from further back: the centre frame reads flat and square-on, while the
+    // diagonal either side still shows clear depth (previous frames toward you, next ones away)
     const cardW = 3.2;
     const cardH = 2.0;
-    const t = Math.tan((fov * Math.PI) / 360);
     const base = {
         // fill: share of the screen height the centre frame takes; widthShare: of the width
         // fog: starts fogStart behind the front frame and is complete fogSpan further
-        desktop: { gap: 0.14, fold: 0.9, farFold: 0.24, drum: 1.45, roller: 0.62, dolly: 0.74, fill: 0.58, widthShare: 0.48, fogStart: 2.6, fogSpan: 12, maxSlot: 3.4, parallax: 1 },
-        tablet: { gap: 0.14, fold: 0.84, farFold: 0.22, drum: 1.25, roller: 0.55, dolly: 0.76, fill: 0.5, widthShare: 0.62, fogStart: 2.4, fogSpan: 9, maxSlot: 2.6, parallax: 0.6 },
-        mobile: { gap: 0.12, fold: 0.8, farFold: 0.2, drum: 0.95, roller: 0.45, dolly: 0.86, fill: 0.42, widthShare: 0.86, fogStart: 2.2, fogSpan: 7, maxSlot: 1.9, parallax: 0.25 },
+        // diag: angle (radians, seen from above) of the frames either side of the centre frame
+        // corner: radius of the two folds next to the centre frame
+        // maxSlot / maxLeft: how many frames show to the right (receding) / left (coming toward you)
+        desktop: { fov: 32, gap: 0.14, diag: 0.92, corner: 0.32, dolly: 1, fill: 0.52, widthShare: 0.56, fogStart: 3.5, fogSpan: 16, maxSlot: 3.4, maxLeft: 1.7, parallax: 1 },
+        tablet: { fov: 36, gap: 0.14, diag: 0.88, corner: 0.3, dolly: 1, fill: 0.46, widthShare: 0.66, fogStart: 3.2, fogSpan: 12, maxSlot: 2.8, maxLeft: 1.6, parallax: 0.6 },
+        mobile: { fov: 42, gap: 0.12, diag: 0.84, corner: 0.26, dolly: 1, fill: 0.4, widthShare: 0.74, fogStart: 3, fogSpan: 9, maxSlot: 2.2, maxLeft: 1.5, parallax: 0.25 },
     }[device];
+    const fov = base.fov;
+    const t = Math.tan((fov * Math.PI) / 360);
     // camera distance: card height fills `fill` of the viewport height,
     // pulled back further when the viewport is narrow so the active card fits
     const fitHeight = cardH / base.fill / (2 * t);
     const fitWidth = cardW / base.widthShare / (2 * t * aspect);
-    // dolly: then move in closer than the flat fit — the folded frames are
-    // foreshortened, and the short distance is what gives the strong depth
+    // dolly < 1 would move in closer than the flat fit (the centre frame now faces the camera, so 1 = exact fit)
     const camZ = Math.max(fitHeight, fitWidth) * base.dolly;
     const pitch = cardW + base.gap;
     return {
@@ -30,10 +32,8 @@ export function computeLayout(width, height) {
         cardH,
         gap: base.gap,
         pitch,
-        fold: base.fold,
-        farFold: base.farFold,
-        drum: base.drum,
-        roller: base.roller,
+        diag: base.diag,
+        corner: base.corner,
         cardY: 0.12,
         floorY: -1.5,
         camY: 0.42,
@@ -42,6 +42,7 @@ export function computeLayout(width, height) {
         fogNear: camZ + base.fogStart,
         fogFar: camZ + base.fogStart + base.fogSpan,
         maxSlot: base.maxSlot,
+        maxLeft: base.maxLeft,
         damping: device === "desktop" ? 6.5 : 8,
         parallax: base.parallax,
     };

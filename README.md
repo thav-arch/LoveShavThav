@@ -45,6 +45,7 @@ fonts/                Inter Tight, Marcellus SC, Jersey 25 (self-hosted)
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
 - **Change the look of the 3D world** (grid glow, cursor ripple, corner rounding): the `motion.theme` block at the top of `js/main.js`.
+- **Change the shape of the strip** (angle of the side projects, lens, how many show each side, per desktop / tablet / phone): the table at the top of `js/core/layout.js` (`diag`, `fov`, `maxSlot`, `maxLeft`).
 
 ## Add a project page
 

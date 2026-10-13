@@ -169,8 +169,8 @@ export function createWorld(container, { openProject }) {
     gridLines.position.y = L.floorY;
     gridHalo.position.y = L.floorY - 0.002;
 
-    // the film's sideways speed is its speed along the path × cos(fold)
-    const sx = motion.arc * Math.cos(L.fold);
+    // the centre frame faces the camera, so the film's sideways speed there is its speed along the path
+    const sx = motion.arc;
     u.uShift.value = -(((sx % CELL) + CELL) % CELL);
     u.uTime.value = elapsed;
     u.uVoid.value = 1 - Math.pow(1 - portal, 3);
@@ -566,7 +566,8 @@ export function createWorld(container, { openProject }) {
       const introK = easeOut(clamp(motion.intro * 1.7 - a * 0.16 - 0.1, 0, 1));
       const wv = smooth(0, 1, clamp(motion.worldVis * 1.5 - a * 0.1, 0, 1));
       const vis = introK * wv;
-      const edge = 1 - smooth(L.maxSlot - 0.9, L.maxSlot, a);
+      // frames to the left come toward the camera, so they fade out sooner than the receding ones on the right
+      const edge = slot < 0 ? 1 - smooth(L.maxLeft - 0.6, L.maxLeft, a) : 1 - smooth(L.maxSlot - 0.9, L.maxSlot, a);
       const hover = damp(u.uHover.value, motion.hovered === k ? 1 : 0, 8, dt);
       // the centre frame reacts first; outer frames follow a beat later
       const vel = clamp((motion.flex + (motion.flexSlow - motion.flex) * clamp(a / 2.5, 0, 1)) * velScale, -1.4, 1.4);

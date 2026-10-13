@@ -3,30 +3,28 @@ import * as THREE from "three";
 import { INSTANCE_COUNT, mod, motion, projectAtInstance, wrapSigned } from "./motion.js";
 import { projects } from "./projects.js";
 /**
- * The film strip over rollers.
+ * The film strip on a diagonal (landing-page redesign, Oct 2026).
  *
- * Seen from above, the strip zig-zags through a row of fixed rollers, like
- * film threaded through a projector:
+ * Seen from above, the strip runs as one long diagonal, with a flat landing in the
+ * middle where the current project faces the camera:
  *
- *            far roller            far roller
- *       \        /\                  /\
- *        \      /  \                /  \
- *         \    /    \              /
- *          \  /      \            /             ← camera below
- *           \/  near   \/ near
+ *                                   /   next projects recede into the distance
+ *                                  /
+ *                    ____________ /
+ *                   /   centre       ← faces the camera
+ *                  /
+ *                 /   previous projects come toward the camera
  *
- *  - between two rollers the film runs STRAIGHT, so every frame is a flat
- *    panel seen at an angle (alternating: receding / coming forward);
- *  - all bending happens over the rollers, in the gaps between frames;
- *  - at rest the gaps sit exactly on the rollers: the centre frame runs from
- *    the near roller on its left to the far roller on its right.
+ *                       camera
  *
- * Scrolling slides the film ALONG this fixed path, so each frame flips its
- * angle as it rolls over a roller — the perspective illusion.
+ *  - every frame is a flat panel; the only bends are the two folds either side of
+ *    the centre frame (in the gaps between frames at rest);
+ *  - scrolling slides the film ALONG this fixed path, so a frame folds as it
+ *    passes a corner: flat in the middle, angled on the diagonal.
  *
  * Frames are placed by true arc length along the path (a lookup table), so
  * they keep their real width on the slopes instead of stretching.
- * The vertex shader (shaders/card.ts) samples the same table from a texture.
+ * The vertex shader (world/shader-card.js) samples the same table from a texture.
  */
 export const BULGE = 0.035; // frames stay almost flat — the rollers do the bending
 export const WAVE = 0.12; // velocity-driven travelling wave along the strip
@@ -118,24 +116,14 @@ function placeRollers(L, pos) {
 }
 /**
  * Angle (top view) of run j — the stretch of film between roller j and j+1.
- * Run 0 is the centre frame. Going right z += sin(angle), so negative = recedes.
- *
- *   run -1  recedes to the left, off the drum
- *   run  0  falls away to the right, wrapped over the drum
- *   run  1+ the far wall: a calm, gentle zig-zag that faces the camera
- *   run -2… keeps receding to the left (never swings back at the camera)
  */
 function runAngle(L, j) {
-    if (j === -1)
-        return L.fold * 0.5;
-    if (j === 0)
-        return -L.fold;
-    if (j > 0)
-        return mod(j, 2) === 1 ? L.farFold : -L.farFold;
-    return (mod(j, 2) === 0 ? 0.25 : 0.45) * L.fold;
+    // run 0 is the centre frame: square to the camera. Every other run lies on the diagonal:
+    // going right the strip moves away from the camera (z += sin(angle), so negative = away)
+    return j === 0 ? 0 : -L.diag;
 }
-/** roller j sits between run j-1 and run j: the big drum in front, tight rollers elsewhere */
-const rollerRadius = (L, j) => (j === 0 ? L.drum : j === 1 ? L.roller : L.roller * 1.6);
+/** roller j sits between run j-1 and run j: only the two next to the centre frame actually bend the film */
+const rollerRadius = (L) => L.corner;
 /**
  * Heading of the film at arc length s: straight runs joined by circular arcs
  * around the rollers (the drum wraps a large part of the frames on either side).
@@ -154,7 +142,7 @@ function heading(L, s) {
     const b = rollers[j + ROLLERS];
     const from = runAngle(L, j - 1);
     const to = runAngle(L, j);
-    const R = rollerRadius(L, j);
+    const R = rollerRadius(L);
     // the film wraps the roller evenly (constant curvature). When the strip turns
     // from coming forward to receding, the crest (heading 0) sits exactly on the
     // gap, so the wrap reaches |from|·R to the left and |to|·R to the right.
@@ -172,7 +160,7 @@ function heading(L, s) {
  */
 export function pathModel(L, pos = motion.pos) {
     const at = Math.abs(pos - Math.round(pos)) < 1e-4 ? Math.round(pos) : pos;
-    const key = `${stripModel(L).key}|${L.fold}|${L.farFold}|${L.drum}|${L.roller}|${mod(Math.floor(at), INSTANCE_COUNT || 1)}|${(at - Math.floor(at)).toFixed(4)}`;
+    const key = `${stripModel(L).key}|${L.diag}|${L.corner}|${mod(Math.floor(at), INSTANCE_COUNT || 1)}|${(at - Math.floor(at)).toFixed(4)}`;
     if (path.key === key)
         return path;
     placeRollers(L, at);
@@ -207,10 +195,7 @@ export function pathModel(L, pos = motion.pos) {
                 write(i, x, z, s);
         }
     }
-    // keep the stage depth steady: the screen centre sits half a run behind the near rollers
-    const dz = Math.sin(L.fold) * (L.pitch / 2);
-    for (let i = 0; i < PATH_N; i++)
-        data[i * 4 + 1] -= dz;
+    // the centre frame sits at z = 0, square to the camera (no depth offset needed)
     path = { key, data };
     return path;
 }
@@ -276,7 +261,7 @@ export function pickCard(ray, L, maxSlot = L.maxSlot) {
     let best = null;
     for (let k = 0; k < INSTANCE_COUNT; k++) {
         const slot = slotOf(k);
-        if (Math.abs(slot) > maxSlot)
+        if (Math.abs(slot) > maxSlot || slot < -L.maxLeft)
             continue;
         const lu = (hitS - frameOffset(k, arc, L)) / frameWidth(k, L);
         const lv = (hy - L.cardY) / L.cardH;
