@@ -43,6 +43,8 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261013`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261013` across the folder in VS Code.)
+
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
 - **Change the look of the 3D world** (grid glow, cursor ripple, corner rounding): the `motion.theme` block at the top of `js/main.js`.
