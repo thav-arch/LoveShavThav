@@ -7,6 +7,7 @@ import { projectIndex, setProjects } from "./core/projects.js";
 import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { initIndex } from "./ui/index-view.js";
+import { startIntro } from "./ui/intro.js";
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
@@ -67,16 +68,31 @@ onCursorLabel((label) => {
   else delete root.dataset.sceneCursor;
 });
 
-// no loading screen: the reel glides in as soon as the project previews are decoded
-// (the scene also marks itself ready after a few seconds, so a slow image never holds it back)
-if (loading.ready) requestReveal();
-else {
-  const stop = loading.subscribe(() => {
-    if (!loading.ready) return;
-    stop();
-    requestReveal();
-  });
-}
+// The scroll intro (js/ui/intro.js) plays first; the 3D strip waits behind it, paused (no GPU work), and
+// glides in once the intro has ended AND the project previews are decoded (the scene also marks itself
+// ready after a few seconds, so a slow image never holds it back).
+let introDone = false;
+let revealed = false;
+const tryReveal = () => {
+  if (revealed || !introDone || !loading.ready) return;
+  revealed = true;
+  motion.paused = false;
+  requestReveal();
+};
+loading.subscribe(tryReveal);
+if (document.documentElement.hasAttribute("data-intro")) motion.paused = true;
+startIntro({
+  profile,
+  // the pieces of work that gather into the portal: project covers + a few shots from the case studies
+  images: (() => {
+    const c = Object.fromEntries(projects.filter((p) => p.thumbnailSmall).map((p) => [p.slug, p.thumbnailSmall]));
+    return [c["songs-of-saaja"], c["dabba-rush"], c["umbrella-man"], "images/intro/elevator-lobby.webp", c["farmville-2-event-design"], "images/intro/saaja-environment.webp", c["elevator-empire"], "images/intro/saaja-keyart.webp"].filter(Boolean);
+  })(),
+  onDone: () => {
+    introDone = true;
+    tryReveal();
+  },
+});
 
 /* ------------------------------------------------------------- navigation */
 // Closing a project steps back in history (so the Back button and Close behave the same);

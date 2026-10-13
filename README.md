@@ -29,7 +29,7 @@ css/                  fonts.css · base.css · world.css (landing) · case.css (
 js/data.js            ALL the content of the landing page: projects (title, year, cover…) and the Profile text
 js/main.js            starts everything
 js/core, js/world     the 3D film strip, shaders, loading (three.js is in js/vendor)
-js/ui                 navigation, Full view, opening / closing project pages
+js/ui                 navigation, Full view, opening / closing project pages, intro.js (the scroll intro)
 js/pages/saaja.js     scroll animations of the Songs of Saaja page
 js/pages/elevator-empire.js   text reveal, counting numbers and videos of the Elevator Empire page
 js/video-manager.js   looping videos: one plays at a time, sound control per video, lazy loading (reusable)
@@ -38,17 +38,27 @@ images/covers/        the landing-page card images (<slug>.webp = 1920px, <slug>
 images/saaja/         images of the Songs of Saaja page
 images/elevator-empire/   the Elevator Empire artwork (p00-p15.webp slices), video posters, and video/ (put the 4 videos here)
 fonts/                Inter Tight, Marcellus SC, Jersey 25 (self-hosted)
+images/intro/         three extra small images used in the scroll intro (with the project covers)
 resume/               the two résumé PDFs linked from the Resume menu (top right). Replace a file with one of the same name to update it
 ```
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261013c`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261013c` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
 - **Change the look of the 3D world** (grid glow, cursor ripple, corner rounding): the `motion.theme` block at the top of `js/main.js`.
 - **Change the shape of the strip** (angle of the side projects, lens, how many show each side, per desktop / tablet / phone): the table at the top of `js/core/layout.js` (`diag`, `fov`, `maxSlot`, `maxLeft`).
+
+## The scroll intro
+
+The first time someone opens the site (once per browser session) a short scroll-driven intro plays before the 3D strip: pieces of work float on black around your name, gather into a ring as they scroll, a blue portal opens inside it, they are pulled in, and the camera dives through to the strip. "Skip intro" (or Escape) ends it; visitors who prefer reduced motion never see it.
+
+- **Text:** your name, roles and one-line intro come from `profile` in `js/data.js`.
+- **Images:** the list in `js/main.js` (search for `startIntro`): project covers plus the files in `images/intro/`.
+- **Timing / length:** `T` (the stages, 0 → 1) at the top of `js/ui/intro.js`; the scroll length is `.intro-track { height }` in `css/intro.css`.
+- **To see it again** while testing: open the site in a new tab or a private window.
 
 ## Add a project page
 

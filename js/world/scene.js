@@ -384,6 +384,8 @@ export function createWorld(container, { openProject }) {
     motion.pointer.inside = false;
   };
   const onKey = (e) => {
+    // the scroll intro (js/ui/intro.js) has the keyboard while it plays
+    if (document.documentElement.hasAttribute("data-intro")) return;
     if (!canScroll() || e.target?.closest?.("input, textarea")) return;
     if (e.key === "ArrowRight" || e.key === "ArrowDown") motion.target = clampPos(Math.round(motion.target) + 1);
     else if (e.key === "ArrowLeft" || e.key === "ArrowUp") motion.target = clampPos(Math.round(motion.target) - 1);
