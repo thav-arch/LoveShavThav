@@ -164,7 +164,7 @@
   opacity: 0.55;
 }
 .nav-tl,
-.nav-tr {
+.nav-trw {
   top: calc(var(--gutter) + env(safe-area-inset-top, 0px));
 }
 .nav-bl,
@@ -176,9 +176,74 @@
 .nav-bl {
   left: max(var(--gutter), env(safe-area-inset-left, 0px));
 }
-.nav-tr,
+.nav-trw,
 .nav-br {
   right: max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+/* top right: Resume menu + Profile */
+.nav-trw {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+.nav-rs {
+  position: relative;
+}
+/* the menu opens on hover (mouse), on keyboard focus, or with a tap / click on "Resume" */
+.nav-rs-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin: 0;
+  padding: 14px 0 0; /* the gap is part of the menu, so the pointer can travel down without closing it */
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease),
+    visibility 0s 0.25s;
+}
+.nav-rs[data-open] .nav-rs-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+@media (hover: hover) {
+  .nav-rs:hover .nav-rs-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition:
+      opacity 0.25s var(--ease),
+      transform 0.25s var(--ease);
+  }
+}
+.nav-rs-menu a {
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.25s;
+}
+.nav-rs-menu a:hover,
+.nav-rs-menu a:focus-visible {
+  opacity: 1;
+}
+.nav-rs-menu a span {
+  display: inline-block;
+  margin-left: 4px;
+  transition: transform 0.25s var(--ease);
+}
+.nav-rs-menu a:hover span {
+  transform: translate(2px, -2px);
 }
 .nav-bl {
   display: flex;

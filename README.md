@@ -38,6 +38,7 @@ images/covers/        the landing-page card images (<slug>.webp = 1920px, <slug>
 images/saaja/         images of the Songs of Saaja page
 images/elevator-empire/   the Elevator Empire artwork (p00-p15.webp slices), video posters, and video/ (put the 4 videos here)
 fonts/                Inter Tight, Marcellus SC, Jersey 25 (self-hosted)
+resume/               the two résumé PDFs linked from the Resume menu (top right). Replace a file with one of the same name to update it
 ```
 
 ## Everyday edits

@@ -21,6 +21,23 @@ export function initNav() {
   const profile = $(".portal-content");
 
   $(".nav-tl").addEventListener("click", () => setMode("WORLD"));
+
+  // Resume menu: hover opens it (CSS); a click / tap on "Resume" toggles it (touch screens, keyboard);
+  // a click elsewhere or Escape closes it
+  const rs = $(".nav-rs");
+  const rsBtn = $(".nav-rs-btn");
+  const setResume = (open) => {
+    rs.toggleAttribute("data-open", open);
+    rsBtn.setAttribute("aria-expanded", String(open));
+  };
+  rsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    setResume(!rs.hasAttribute("data-open"));
+  });
+  rs.addEventListener("focusout", (e) => !rs.contains(e.relatedTarget) && setResume(false));
+  rs.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setResume(false)));
+  document.addEventListener("pointerdown", (e) => !rs.contains(e.target) && setResume(false));
+  addEventListener("keydown", (e) => e.key === "Escape" && setResume(false));
   profileBtn.addEventListener("click", () => togglePortal("PROFILE"));
   featured.addEventListener("click", () => setMode("WORLD"));
   full.addEventListener("click", () => setMode("INDEX"));

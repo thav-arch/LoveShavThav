@@ -40,7 +40,17 @@
 
       <nav class="nav" aria-label="Portfolio">
         <button class="nav-tl">Thavanesh Nagarajan</button>
-        <button class="nav-tr" aria-expanded="false">Profile</button>
+        <!-- top right: Resume (menu with the two PDFs) + Profile -->
+        <div class="nav-trw">
+          <div class="nav-rs">
+            <button class="nav-rs-btn" aria-haspopup="true" aria-expanded="false" aria-controls="resume-menu">Resume</button>
+            <ul id="resume-menu" class="nav-rs-menu">
+              <li><a href="resume/Thavanesh_TheGameDesigner.pdf" target="_blank" rel="noopener">Game designer <span aria-hidden="true">↗</span></a></li>
+              <li><a href="resume/Thavanesh_TheExperienceDesigner.pdf" target="_blank" rel="noopener">Product designer <span aria-hidden="true">↗</span></a></li>
+            </ul>
+          </div>
+          <button class="nav-tr" aria-expanded="false">Profile</button>
+        </div>
         <div class="nav-bl">
           <button class="nav-featured" aria-pressed="true"><span data-on>Featured</span></button>
           <i aria-hidden="true">/</i>
