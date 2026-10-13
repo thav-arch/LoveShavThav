@@ -283,8 +283,8 @@ export function createWorld(container, { openProject }) {
   const cards = [];
   for (let k = 0; k < INSTANCE_COUNT; k++) cards.push(createCard(k, projects[projectAtInstance(k)], motion.layout.cardH));
 
-  // first load: report progress to the film-reel loader; it opens its shutters once the previews
-  // are decoded and then asks for the intro (core/loading.js)
+  // first load: report progress; js/main.js starts the intro once the previews are decoded
+  // (core/loading.js)
   loading.sceneMounted();
   loading.expectTextures(projects.length);
   texturesReady().then(() => loading.markReady());

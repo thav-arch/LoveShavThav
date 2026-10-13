@@ -1,12 +1,11 @@
-// Entry point of the landing page: wires the content (js/data.js), the 3D world, the loader, the
+// Entry point of the landing page: wires the content (js/data.js), the 3D world, the
 // navigation, the Full view, the Profile portal and the project pages together.
 import { onCursorLabel } from "./core/cursor.js";
-import { onReveal } from "./core/loading.js";
+import { loading, onReveal, requestReveal } from "./core/loading.js";
 import { motion } from "./core/motion.js";
 import { projectIndex, setProjects } from "./core/projects.js";
 import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
-import { startLoader } from "./ui/loader.js";
 import { initIndex } from "./ui/index-view.js";
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
@@ -47,7 +46,7 @@ let world = null;
 try {
   world = createWorld(document.querySelector(".scene"), { openProject: (slug, origin) => enterProject(slug, origin) });
 } catch (e) {
-  // no WebGL: the loader still finishes, and the page falls back to the Full (list) view
+  // no WebGL: the page falls back to the Full (list) view
   console.error("The 3D world could not start:", e);
   import("./core/loading.js").then(({ loading }) => loading.markReady());
   onReveal(() => {
@@ -68,8 +67,16 @@ onCursorLabel((label) => {
   else delete root.dataset.sceneCursor;
 });
 
-// the film-reel loader plays on every visit to the landing page
-startLoader(document.querySelector(".fl"));
+// no loading screen: the reel glides in as soon as the project previews are decoded
+// (the scene also marks itself ready after a few seconds, so a slow image never holds it back)
+if (loading.ready) requestReveal();
+else {
+  const stop = loading.subscribe(() => {
+    if (!loading.ready) return;
+    stop();
+    requestReveal();
+  });
+}
 
 /* ------------------------------------------------------------- navigation */
 // Closing a project steps back in history (so the Back button and Close behave the same);

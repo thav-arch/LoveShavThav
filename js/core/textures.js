@@ -79,7 +79,7 @@ export function getProjectTexture(p) {
             .then((r) => swap(entry, r))
             .catch(() => swap(entry, { texture: fallback(p), aspect: 1.6 }))
             .finally(() => {
-            loading.textureLoaded(); // feeds the film-reel loader's progress
+            loading.textureLoaded();
             idle(() => loadImage(p.thumbnail).then((r) => swap(entry, r), () => { }));
         });
         readyPromises.push(ready);

@@ -36,7 +36,7 @@ export const loading = {
         return () => void listeners.delete(fn);
     },
 };
-/** the loader calls this when its shutters open; the carousel plays the intro */
+/** js/main.js calls this once the previews are ready; the carousel then plays its intro */
 let revealHandler = null;
 let revealRequested = false;
 export function onReveal(fn) {

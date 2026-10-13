@@ -21,7 +21,7 @@ A custom domain can be attached on either.
 ## What is where
 
 ```
-index.html            the landing page (3D strip, Featured / Full views, Profile, loader)
+index.html            the landing page (3D strip, Featured / Full views, Profile, Resume menu)
 projects/             one HTML file per project page
   songs-of-saaja.html
   elevator-empire.html
@@ -29,7 +29,7 @@ css/                  fonts.css · base.css · world.css (landing) · case.css (
 js/data.js            ALL the content of the landing page: projects (title, year, cover…) and the Profile text
 js/main.js            starts everything
 js/core, js/world     the 3D film strip, shaders, loading (three.js is in js/vendor)
-js/ui                 loader, navigation, Full view, opening / closing project pages
+js/ui                 navigation, Full view, opening / closing project pages
 js/pages/saaja.js     scroll animations of the Songs of Saaja page
 js/pages/elevator-empire.js   text reveal, counting numbers and videos of the Elevator Empire page
 js/video-manager.js   looping videos: one plays at a time, sound control per video, lazy loading (reusable)
@@ -43,7 +43,7 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261013`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261013` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261013b`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261013b` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
