@@ -44,7 +44,7 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014c`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014c` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014d`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014d` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
@@ -58,7 +58,7 @@ The first time someone opens the site (once per browser session) a short scroll-
 - **Text:** your name, roles and one-line intro come from `profile` in `js/data.js`.
 - **Images:** the list in `js/main.js` (search for `startIntro`): project covers plus the files in `images/intro/`.
 - **Timing / length:** `T` (the stages, 0 → 1) at the top of `js/ui/intro.js`; the scroll length is `.intro-track { height }` in `css/intro.css`.
-- **To see it again** while testing: open the site in a new tab or a private window.
+- **To see it again** (it plays once per browser tab): add `?intro` to the address, e.g. `http://127.0.0.1:5500/index.html?intro` or `https://thav-arch.github.io/ThakitaThav/?intro`.
 
 ## Add a project page
 

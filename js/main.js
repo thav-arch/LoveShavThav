@@ -7,7 +7,7 @@ import { projectIndex, setProjects } from "./core/projects.js";
 import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { initIndex } from "./ui/index-view.js";
-import { startIntro } from "./ui/intro.js";
+import { startIntro } from "./ui/intro.js?v=20261014d"; // version-tagged: changes often
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
