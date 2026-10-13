@@ -34,7 +34,13 @@ html[data-intro] .nav {
   contain: strict;
 }
 
-/* the pieces of work */
+/* the pieces of work, floating in 3D (depth makes nearer pieces larger) */
+.intro-cards {
+  position: absolute;
+  inset: 0;
+  perspective: 1100px;
+  perspective-origin: 50% 50%;
+}
 .ic {
   position: absolute;
   left: 0;
@@ -54,9 +60,20 @@ html[data-intro] .nav {
   display: block;
   user-select: none;
 }
+/* blue wash as they are pulled into the vortex (opacity only: cheap) */
+.ic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(160deg, rgba(120, 170, 255, 0.85), rgba(25, 55, 200, 0.95));
+  mix-blend-mode: screen;
+  opacity: var(--tint, 0);
+}
 /* blue rim light once they form the ring (opacity only: cheap) */
 .ic::after {
   content: "";
+  z-index: 2;
   position: absolute;
   inset: 0;
   border-radius: inherit;
