@@ -30,7 +30,7 @@ export function initFocusDesc(world, projects) {
     el.toggleAttribute("data-on", !!on);
     if (on) {
       const r = world.centreRect();
-      el.style.maxWidth = `${Math.max(240, (r.right - r.left) * 0.7)}px`;
+      el.style.maxWidth = `${Math.max(240, (r.right - r.left) * 0.92)}px`;
       el.style.transform = `translate3d(${r.left}px, ${r.top - el.offsetHeight - 14}px, 0)`;
     }
   };

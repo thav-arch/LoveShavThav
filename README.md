@@ -44,7 +44,7 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014e`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014e` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014f`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014f` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
@@ -56,6 +56,8 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 The first time someone opens the site (once per browser session) a short scroll-driven intro plays before the 3D strip: pieces of work float on black around your name, gather into a ring as they scroll, a blue portal opens inside it, they are pulled in, and the camera dives through to the strip. "Skip intro" (or Escape) ends it; visitors who prefer reduced motion never see it.
 
 - **Text:** your name, roles and one-line intro come from `profile` in `js/data.js`.
+- **After the portal:** the lines that appear one by one, and the "Welcome to my portfolio" screen that follows, are `intro.lines` and `intro.welcome` in `js/data.js`.
+- **Project descriptions** (two lines above the project in focus): `description` on each project in `js/data.js` (empty = none shown).
 - **Images:** the list in `js/main.js` (search for `startIntro`): project covers plus the files in `images/intro/`.
 - **Timing / length:** `T` (the stages, 0 → 1) at the top of `js/ui/intro.js`; the scroll length is `.intro-track { height }` in `css/intro.css`.
 - **To see it again** (it plays once per browser tab): add `?intro` to the address, e.g. `http://127.0.0.1:5500/index.html?intro` or `https://thav-arch.github.io/ThakitaThav/?intro`.
