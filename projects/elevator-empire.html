@@ -8,10 +8,10 @@
     <meta name="theme-color" content="#7ce7f4" />
     <!-- every path below is relative to the site root, so this file works on its own AND when the 3D home page loads it -->
     <base href="../" />
-    <link rel="stylesheet" href="css/fonts.css?v=20261014f" />
-    <link rel="stylesheet" href="css/base.css?v=20261014f" />
-    <link rel="stylesheet" href="css/case.css?v=20261014f" />
-    <link rel="stylesheet" href="css/elevator-empire.css?v=20261014f" />
+    <link rel="stylesheet" href="css/fonts.css?v=20261014g" />
+    <link rel="stylesheet" href="css/base.css?v=20261014g" />
+    <link rel="stylesheet" href="css/case.css?v=20261014g" />
+    <link rel="stylesheet" href="css/elevator-empire.css?v=20261014g" />
     <link rel="preload" href="fonts/Jersey25.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" as="image" href="images/elevator-empire/p00.webp" />
   </head>
@@ -27,7 +27,23 @@
     >
       <header class="cs-bar">
         <button class="cs-home" data-action="close">Thavanesh Nagarajan</button>
-        <div class="cs-pager"></div>
+        <!-- sections of this page: click to glide there; the current one is highlighted (js/pages/elevator-empire.js) -->
+        <nav class="ee-nav" aria-label="Sections of this page">
+          <button class="ee-nav-toggle" type="button" aria-expanded="false">Sections</button>
+          <ul class="ee-nav-list">
+            <li><a href="projects/elevator-empire.html#ee-intro">Intro</a></li>
+            <li><a href="projects/elevator-empire.html#ee-origin">Origin</a></li>
+            <li><a href="projects/elevator-empire.html#ee-players">Players</a></li>
+            <li><a href="projects/elevator-empire.html#ee-findings">Findings</a></li>
+            <li><a href="projects/elevator-empire.html#ee-synthesis">Synthesis</a></li>
+            <li><a href="projects/elevator-empire.html#ee-game">The Game</a></li>
+            <li><a href="projects/elevator-empire.html#ee-mechanics">Mechanics</a></li>
+            <li><a href="projects/elevator-empire.html#ee-systems">Systems</a></li>
+            <li><a href="projects/elevator-empire.html#ee-prototypes">Prototypes</a></li>
+            <li><a href="projects/elevator-empire.html#ee-next">What’s next</a></li>
+          </ul>
+          <i class="ee-nav-bar" aria-hidden="true"></i>
+        </nav>
         <button class="cs-close" data-action="close" aria-label="Close project">Close <span aria-hidden="true">×</span></button>
       </header>
 
@@ -57,6 +73,17 @@
           <!-- the button painted into the artwork -->
           <a class="ee-btn" href="projects/elevator-empire.html#prototypes" style="--x:394;--y:6905;--w:242;--h:62;--r:10" aria-label="Check it out: jump to the prototypes"></a>
           <span id="prototypes" class="ee-anchor" style="--y:11500"></span>
+          <!-- section anchors for the top navigation (design y positions) -->
+          <span id="ee-intro" class="ee-anchor" data-section style="--y:0"></span>
+          <span id="ee-origin" class="ee-anchor" data-section style="--y:2140"></span>
+          <span id="ee-players" class="ee-anchor" data-section style="--y:3142"></span>
+          <span id="ee-findings" class="ee-anchor" data-section style="--y:4400"></span>
+          <span id="ee-synthesis" class="ee-anchor" data-section style="--y:5120"></span>
+          <span id="ee-game" class="ee-anchor" data-section style="--y:6380"></span>
+          <span id="ee-mechanics" class="ee-anchor" data-section style="--y:7737"></span>
+          <span id="ee-systems" class="ee-anchor" data-section style="--y:8640"></span>
+          <span id="ee-prototypes" class="ee-anchor" data-section style="--y:11400"></span>
+          <span id="ee-next" class="ee-anchor" data-section style="--y:15100"></span>
 
           <!-- the text of the page -->
           <div class="ee-text">
@@ -252,6 +279,6 @@
 
     <script src="js/vendor/gsap.min.js"></script>
     <script src="js/vendor/lenis.min.js"></script>
-    <script type="module" data-page src="js/pages/elevator-empire.js?v=20261014f"></script>
+    <script type="module" data-page src="js/pages/elevator-empire.js?v=20261014g"></script>
   </body>
 </html>

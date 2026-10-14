@@ -57,10 +57,56 @@ export function mount(cs) {
     const target = id && ee.querySelector("#" + CSS.escape(id));
     if (!target) return;
     e.preventDefault();
-    const top = target.getBoundingClientRect().top - cs.getBoundingClientRect().top + cs.scrollTop - 24;
-    cs.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    const top = target.getBoundingClientRect().top - cs.getBoundingClientRect().top + cs.scrollTop - barH();
+    if (cs.lenis && !reduced) cs.lenis.scrollTo(Math.max(0, top), { duration: 1.3, easing: (t) => 1 - Math.pow(1 - t, 4) });
+    else cs.scrollTo({ top, behavior: reduced ? "auto" : "smooth" });
+    setMenu(false);
   };
   cs.addEventListener("click", onClick);
+
+  /* ------------------------------------------- section navigation (top bar) */
+  const nav = cs.querySelector(".ee-nav");
+  const navLinks = nav ? [...nav.querySelectorAll(".ee-nav-list a")] : [];
+  const bar = nav?.querySelector(".ee-nav-bar");
+  const toggle = nav?.querySelector(".ee-nav-toggle");
+  const anchors = [...ee.querySelectorAll("[data-section]")];
+  const barH = () => (cs.querySelector(".cs-bar")?.offsetHeight || 60) + 8;
+  const setMenu = (open) => {
+    if (!nav) return;
+    nav.toggleAttribute("data-open", open);
+    toggle?.setAttribute("aria-expanded", String(open));
+  };
+  toggle?.addEventListener("click", () => setMenu(!nav.hasAttribute("data-open")));
+  // the section being read: the last one whose start has passed 40% of the screen
+  let current = -1;
+  let spyRaf = 0;
+  // the yellow underline slides to the current link (desktop bar only)
+  const moveBar = () => {
+    const l = navLinks[current];
+    if (!bar || !l || !l.offsetParent) return;
+    bar.style.width = l.offsetWidth + "px";
+    bar.style.transform = "translateX(" + l.offsetLeft + "px)";
+  };
+  const spy = () => {
+    spyRaf = 0;
+    const line = cs.getBoundingClientRect().top + cs.clientHeight * 0.4;
+    let idx = 0;
+    anchors.forEach((a, i) => {
+      if (a.getBoundingClientRect().top <= line) idx = i;
+    });
+    if (idx === current) return;
+    current = idx;
+    navLinks.forEach((l, i) => (i === idx ? l.setAttribute("aria-current", "true") : l.removeAttribute("aria-current")));
+    if (toggle) toggle.textContent = navLinks[idx]?.textContent || "Sections";
+    moveBar();
+  };
+  const onSpy = () => {
+    if (!spyRaf) spyRaf = requestAnimationFrame(spy);
+  };
+  cs.addEventListener("scroll", onSpy, { passive: true });
+  addEventListener("resize", moveBar);
+  spy();
+  const late = setTimeout(() => ((current = -1), spy()), 300); // once the fonts have set the link widths
 
   /* ---------------------------------------------------------------- videos */
   const undoVideos = initVideos(cs);
@@ -69,6 +115,10 @@ export function mount(cs) {
     io.disconnect();
     texts.forEach((el) => counters.get(el)?.());
     cs.removeEventListener("click", onClick);
+    cs.removeEventListener("scroll", onSpy);
+    removeEventListener("resize", moveBar);
+    cancelAnimationFrame(spyRaf);
+    clearTimeout(late);
     undoVideos();
     undoScroll();
   };

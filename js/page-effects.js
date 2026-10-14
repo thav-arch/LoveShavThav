@@ -12,6 +12,7 @@ export function editorialScroll(cs) {
   let raf = 0;
   if (window.Lenis && !reduced) {
     lenis = new window.Lenis({ wrapper: cs, content, lerp: 0.11, smoothWheel: true });
+    cs.lenis = lenis; // pages use it to glide to a section (e.g. the Elevator Empire section nav)
     const loop = (t) => {
       lenis.raf(t);
       raf = requestAnimationFrame(loop);

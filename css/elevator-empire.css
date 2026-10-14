@@ -371,3 +371,98 @@
   border-top: 1px solid rgba(15, 26, 58, 0.18);
   margin-top: 0;
 }
+
+/* section navigation in the top bar (wide screens: a row of links with a sliding underline; smaller: a dropdown) */
+.ee-nav {
+  position: relative;
+  justify-self: center;
+  font-family: "Jersey 25", "Inter Tight", sans-serif;
+  font-size: 17px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+.ee-nav-list {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 4px 8px;
+  list-style: none;
+  border-radius: 999px;
+  background: rgba(14, 12, 40, 0.58);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.ee-nav-list a {
+  display: block;
+  padding: 6px 10px 5px;
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+.ee-nav-list a:hover,
+.ee-nav-list a:focus-visible,
+.ee-nav-list a[aria-current] {
+  color: #fff;
+}
+.ee-nav-list a:focus-visible {
+  outline: 2px solid #fcd442;
+  outline-offset: -2px;
+  border-radius: 999px;
+}
+.ee-nav-bar {
+  position: absolute;
+  left: 8px;
+  bottom: 7px;
+  height: 2px;
+  width: 0;
+  border-radius: 2px;
+  background: #fcd442;
+  pointer-events: none;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ee-nav-toggle {
+  display: none;
+}
+@media (max-width: 1180px) {
+  .cs[data-theme="ee"] .ee-nav-toggle {
+    display: block;
+    min-width: 130px;
+  }
+  .cs[data-theme="ee"] .ee-nav-toggle::after {
+    content: " \25BE";
+  }
+  .ee-nav-bar {
+    display: none;
+  }
+  .ee-nav-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    flex-direction: column;
+    min-width: 180px;
+    padding: 8px;
+    border-radius: 14px;
+    background: rgba(14, 12, 40, 0.88);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -4px);
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0s 0.2s;
+  }
+  .ee-nav[data-open] .ee-nav-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+  }
+  .ee-nav-list a {
+    padding: 8px 12px;
+  }
+}
