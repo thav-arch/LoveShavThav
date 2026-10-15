@@ -8,7 +8,7 @@ import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { initIndex } from "./ui/index-view.js";
 import { initFocusDesc } from "./ui/focus-desc.js";
-import { startIntro } from "./ui/intro.js?v=20261014g"; // version-tagged: changes often
+import { startIntro } from "./ui/intro.js?v=20261015b"; // version-tagged: changes often
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
@@ -88,7 +88,7 @@ startIntro({
   // the pieces of work that gather into the portal: project covers + a few shots from the case studies
   images: (() => {
     const c = Object.fromEntries(projects.filter((p) => p.thumbnailSmall).map((p) => [p.slug, p.thumbnailSmall]));
-    return [c["songs-of-saaja"], c["dabba-rush"], c["umbrella-man"], "images/intro/elevator-lobby.webp", c["farmville-2-event-design"], "images/intro/saaja-environment.webp", c["elevator-empire"], "images/intro/saaja-keyart.webp"].filter(Boolean);
+    return [c["songs-of-saaja"], "images/intro/elevator-howtoplay.webp", c["umbrella-man"], "images/intro/elevator-lobby.webp", c["farmville-2-event-design"], "images/intro/saaja-environment.webp", c["elevator-empire"], "images/intro/saaja-keyart.webp"].filter(Boolean);
   })(),
   onDone: ({ skipped } = {}) => {
     const go = () => {

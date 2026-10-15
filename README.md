@@ -44,7 +44,7 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261014g`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261014g` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261015b`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261015b` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
@@ -76,7 +76,7 @@ A project page can hold any number of looping videos; `js/video-manager.js` make
 
 ## Known state
 
-- **Songs of Saaja** and **Elevator Empire** have project pages; the other five cards show "coming soon".
+- **Songs of Saaja** and **Elevator Empire** have project pages; the other four cards show "coming soon".
 - **Elevator Empire** is the Figma page exported as artwork slices with live text and videos on top, scaled to the window width. On phones it is the same layout scaled down (pinch-zoom works); a dedicated phone layout needs the artwork cut into separate pieces.
 - *Dashboards and UI* and *PowerUI Library* have no cover image yet, so they show a generated placeholder card. Drop `<slug>.webp` and `<slug>-sm.webp` into `images/covers/` and fill `thumbnail` / `thumbnailSmall` in `js/data.js`.
 - Not included in this version: Playground, Journal, About, background music.

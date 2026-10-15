@@ -55,7 +55,7 @@ export function startIntro({ profile, images, lines = [], onDone }) {
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!html.hasAttribute("data-intro") || reduced) {
     html.removeAttribute("data-intro");
-    onDone();
+    onDone({ skipped: true }); // no intro this time (already seen, or reduced motion): straight to the strip, no welcome
     return;
   }
 

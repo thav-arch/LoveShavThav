@@ -16,18 +16,6 @@ window.SITE = {
       "aspect": 1.777
     },
     {
-      "slug": "dabba-rush",
-      "title": "Dabba Rush",
-      "description": "A cycle delivery rider weaves through village roads in 2D, balancing stacked dabbas, dodging obstacles and racing to reach every delivery on time.",
-      "subtitle": "2D Physics Side Scroller / Delivery Game",
-      "year": "2025",
-      "accent": "#b15400",
-      "page": null,
-      "thumbnail": "images/covers/dabba-rush.webp",
-      "thumbnailSmall": "images/covers/dabba-rush-sm.webp",
-      "aspect": 1.703
-    },
-    {
       "slug": "umbrella-man",
       "title": "The Umbrella Man",
       "description": "A narrative game built from hand-made stop-motion frames.",
