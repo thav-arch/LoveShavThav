@@ -8,7 +8,7 @@ import * as store from "./core/store.js";
 import { createWorld } from "./world/scene.js";
 import { initIndex } from "./ui/index-view.js";
 import { initFocusDesc } from "./ui/focus-desc.js";
-import { startIntro } from "./ui/intro.js?v=20261020b"; // version-tagged: changes often
+import { startIntro } from "./ui/intro.js?v=20261020c"; // version-tagged: changes often
 import { initNav } from "./ui/nav.js";
 import { enterProject, exitProject, playIntro, setMode, switchProject } from "./ui/transitions.js";
 
