@@ -1,0 +1,208 @@
+/* The Umbrella Man page.
+   The page is the Figma frame (1440 wide) scaled to the window: 1 unit = 1/1440 of the page width (--u).
+   Artwork = WebP slices (images/umbrella-man/p00…). Text, the trailer, the photo hover layer and the
+   button are real HTML on top of them. */
+.um {
+  --u: calc(min(100cqw, 2200px) / 1440);
+  --ease-um: cubic-bezier(0.22, 1, 0.36, 1);
+  container-type: inline-size;
+  position: relative;
+  margin-inline: auto;
+  height: calc(17408 * var(--u));
+  background: #1e1e1e;
+  overflow-x: clip;
+  color: #fff;
+  font-family: "Cabin Condensed", "Inter Tight", sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ artwork */
+.um-art {
+  position: absolute;
+  inset: 0;
+}
+.um-p {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  top: calc(var(--i) * 1000 * var(--u));
+  height: calc(1000 * var(--u) + 1px); /* 1px overlap hides hairline seams between slices */
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* --------------------------------------------------------------- the trailer */
+.um-video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(1024 * var(--u));
+  background: #0d0d0d;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.um-video iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 100%;
+  border: 0;
+  display: block;
+}
+/* smooth scrolling turns iframes off while the page moves; give the trailer its clicks back when it is still */
+.lenis.lenis-smooth .um-video iframe {
+  pointer-events: auto;
+}
+.lenis.lenis-smooth.lenis-scrolling .um-video iframe {
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------- photos */
+.um-photos {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.um-ph {
+  position: absolute;
+  margin: 0;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  pointer-events: auto;
+  transition:
+    transform 0.6s var(--ease-um),
+    box-shadow 0.6s var(--ease-um);
+}
+.um-ph img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+@media (hover: hover) {
+  .um-ph:hover {
+    z-index: 1;
+    transform: translateY(calc(-6 * var(--u))) scale(1.025);
+    box-shadow: 0 calc(24 * var(--u)) calc(60 * var(--u)) rgba(0, 0, 0, 0.55);
+  }
+}
+
+/* -------------------------------------------------------- the painted button */
+.um-btn {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  border-radius: calc(12 * var(--u));
+  z-index: 1;
+  transition:
+    transform 0.3s var(--ease-um),
+    box-shadow 0.3s var(--ease-um);
+}
+.um-btn[href]:hover {
+  transform: translateY(calc(-3 * var(--u)));
+  box-shadow: 0 calc(10 * var(--u)) calc(26 * var(--u)) rgba(0, 0, 0, 0.45);
+}
+.um-btn:not([href]) {
+  pointer-events: none; /* no document linked yet */
+}
+
+/* --------------------------------------------------------------------- text */
+.um-text {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+.um-t {
+  position: absolute;
+  margin: 0;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  font-size: calc(var(--fs) * var(--u));
+  line-height: 1.215;
+  font-weight: 400;
+  white-space: nowrap;
+  text-align: left;
+}
+.um-t.c {
+  text-align: center;
+}
+.um-t.wrap {
+  white-space: pre-line;
+}
+/* the button label sits on the painted button and moves with it */
+.um-btn:hover ~ .um-text .um-t[style*="--y:2789"] {
+  translate: 0 calc(-3 * var(--u));
+}
+
+/* reveal: text rises into place as it enters the screen (class .in is added by js/pages/umbrella-man.js) */
+.um.is-live .um-t[data-r] {
+  opacity: 0;
+  translate: 0 calc(22 * var(--u));
+  transition:
+    opacity 1s var(--ease-um),
+    translate 1s var(--ease-um);
+  transition-delay: var(--d, 0s);
+}
+.um.is-live .um-t[data-r].in {
+  opacity: 1;
+  translate: 0 0;
+}
+
+/* ------------------------------------------------------------ reading progress */
+.um-progress {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #ff9f9f, #ffd7a8);
+  transform-origin: left;
+  transform: scaleX(var(--p, 0));
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ top bar */
+.cs[data-theme="um"] .cs-bar {
+  mix-blend-mode: normal;
+}
+.cs[data-theme="um"] .cs-bar button {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(20, 20, 20, 0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+
+/* small screens: the page is the desktop design scaled to fit (pinch-zoom for the small print) */
+@media (max-width: 600px) {
+  .cs[data-theme="um"] .cs-bar {
+    right: 0;
+    padding: 10px;
+  }
+  .cs[data-theme="um"] .cs-bar button {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .um.is-live .um-t[data-r] {
+    opacity: 1;
+    translate: 0 0;
+    transition: none;
+  }
+  .um-ph,
+  .um-btn {
+    transition: none;
+  }
+}

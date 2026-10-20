@@ -21,7 +21,7 @@ window.SITE = {
       "subtitle": "Concept Game Trailer",
       "year": "2025",
       "accent": "#96bae6",
-      "page": null,
+      "page": "projects/umbrella-man.html",
       "thumbnail": "images/covers/umbrella-man.webp",
       "thumbnailSmall": "images/covers/umbrella-man-sm.webp"
     },

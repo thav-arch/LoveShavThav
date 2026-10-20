@@ -1,4 +1,4 @@
-/* Self-hosted fonts (latin subset) from Google Fonts: Inter Tight (site), Marcellus SC (Songs of Saaja), Jersey 25 (Elevator Empire) */
+/* Self-hosted fonts (latin subset) from Google Fonts: Inter Tight (site), Marcellus SC (Songs of Saaja), Jersey 25 (Elevator Empire), Cabin Condensed (The Umbrella Man) */
 @font-face {
   font-family: "Inter Tight";
   font-style: normal;
@@ -19,4 +19,18 @@
   font-weight: 400;
   font-display: swap;
   src: url("../fonts/Jersey25.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cabin Condensed";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/CabinCondensed-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cabin Condensed";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/CabinCondensed-700.woff2") format("woff2");
 }

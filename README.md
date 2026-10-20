@@ -25,26 +25,29 @@ index.html            the landing page (3D strip, Featured / Full views, Profile
 projects/             one HTML file per project page
   songs-of-saaja.html
   elevator-empire.html
-css/                  fonts.css · base.css · world.css (landing) · case.css (all project pages) · saaja.css · elevator-empire.css
+  umbrella-man.html
+css/                  fonts.css · base.css · world.css (landing) · case.css (all project pages) · saaja.css · elevator-empire.css · umbrella-man.css
 js/data.js            ALL the content of the landing page: projects (title, year, cover…) and the Profile text
 js/main.js            starts everything
 js/core, js/world     the 3D film strip, shaders, loading (three.js is in js/vendor)
 js/ui                 navigation, Full view, opening / closing project pages, intro.js (the scroll intro)
 js/pages/saaja.js     scroll animations of the Songs of Saaja page
+js/pages/umbrella-man.js   text reveal and reading-progress line of The Umbrella Man page
 js/pages/elevator-empire.js   text reveal, counting numbers and videos of the Elevator Empire page
 js/video-manager.js   looping videos: one plays at a time, sound control per video, lazy loading (reusable)
 js/page-effects.js    smooth scrolling, reveal and parallax shared by project pages
 images/covers/        the landing-page card images (<slug>.webp = up to 1920px, <slug>-sm.webp = 480px). Any shape works: every card on the strip is 16:9 and the image is cropped to fill it, centred (16:9 images fit exactly)
 images/saaja/         images of the Songs of Saaja page
 images/elevator-empire/   the Elevator Empire artwork (p00-p15.webp slices), video posters, and video/ (put the 4 videos here)
-fonts/                Inter Tight, Marcellus SC, Jersey 25 (self-hosted)
+fonts/                Inter Tight, Marcellus SC, Jersey 25, Cabin Condensed (self-hosted)
+images/umbrella-man/  The Umbrella Man artwork slices (p00-p17.webp) and the photos that lift on hover (ph-*.webp)
 images/intro/         three extra small images used in the scroll intro (with the project covers)
 resume/               the two résumé PDFs linked from the Resume menu (top right). Replace a file with one of the same name to update it
 ```
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261020`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261020` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261020b`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261020b` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.
@@ -76,7 +79,8 @@ A project page can hold any number of looping videos; `js/video-manager.js` make
 
 ## Known state
 
-- **Songs of Saaja** and **Elevator Empire** have project pages; the other four cards show "coming soon".
+- **Songs of Saaja**, **Elevator Empire** and **The Umbrella Man** have project pages; the other three cards show "coming soon".
+- **The Umbrella Man** trailer is a YouTube embed (muted autoplay, loop) at the top of `projects/umbrella-man.html`; to change the video, replace the ID `XIdpNlEZ2z4` (twice) in its `src`. The "Check out the Narrative Document" button becomes a link when you give the `<a class="um-btn">` an `href`.
 - **Elevator Empire** is the Figma page exported as artwork slices with live text and videos on top, scaled to the window width. On phones it is the same layout scaled down (pinch-zoom works); a dedicated phone layout needs the artwork cut into separate pieces.
 - *Dashboards and UI* and *PowerUI Library* have no cover image yet, so they show a generated placeholder card. Drop `<slug>.webp` and `<slug>-sm.webp` into `images/covers/` and fill `thumbnail` / `thumbnailSmall` in `js/data.js`.
 - Not included in this version: Playground, Journal, About, background music.
