@@ -11,7 +11,7 @@ import { portalRef, sceneTarget } from "../core/scene-target.js";
 import * as store from "../core/store.js";
 import { disposeLabelTextures, getLabelTexture, LABEL_BAND } from "../core/card-label.js";
 import { getProjectTexture, setMaxAnisotropy, texturesReady } from "../core/textures.js";
-import { arcAt, frameOffset, frameWidth, PATH_MAX, PATH_N, pathModel, pickCard, slotOf } from "../core/track.js";
+import { arcAt, CARD_ASPECT, frameOffset, frameWidth, PATH_MAX, PATH_N, pathModel, pickCard, slotOf } from "../core/track.js";
 import { cardFragment, cardVertex } from "./shader-card.js";
 import { compositeFragment, flowFragment, fullscreenVertex } from "./shader-flow.js";
 import { gridFragment, gridVertex, haloFragment, haloVertex } from "./shader-grid.js";
@@ -20,7 +20,6 @@ import { chromeFragment, discFragment, discVertex, dropVertex, ringVertex } from
 const FLOW_SIZE = 128;
 // the liquid wake is a brief, local ripple — a long, screen-wide smear reads as motion blur
 const WAKE_MS = 900;
-const DEFAULT_ASPECT = 1.6;
 
 const smooth = (a, b, x) => {
   const t = clamp((x - a) / (b - a), 0, 1);
@@ -228,7 +227,7 @@ export function createWorld(container, { openProject }) {
 
   /** one frame of the film strip: the curved card plus its faint floor reflection */
   function createCard(k, project, cardH) {
-    const aspect = project.aspect ?? DEFAULT_ASPECT;
+    const aspect = CARD_ASPECT; // all frames the same shape; the cover is cropped to fit (uCover below)
     const entry = getProjectTexture(project);
     const geometry = new THREE.PlaneGeometry(cardH * aspect, cardH, 64, 12);
     const uniforms = {

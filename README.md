@@ -34,7 +34,7 @@ js/pages/saaja.js     scroll animations of the Songs of Saaja page
 js/pages/elevator-empire.js   text reveal, counting numbers and videos of the Elevator Empire page
 js/video-manager.js   looping videos: one plays at a time, sound control per video, lazy loading (reusable)
 js/page-effects.js    smooth scrolling, reveal and parallax shared by project pages
-images/covers/        the landing-page card images (<slug>.webp = 1920px, <slug>-sm.webp = 480px)
+images/covers/        the landing-page card images (<slug>.webp = up to 1920px, <slug>-sm.webp = 480px). Any shape works: every card on the strip is 16:9 and the image is cropped to fill it, centred (16:9 images fit exactly)
 images/saaja/         images of the Songs of Saaja page
 images/elevator-empire/   the Elevator Empire artwork (p00-p15.webp slices), video posters, and video/ (put the 4 videos here)
 fonts/                Inter Tight, Marcellus SC, Jersey 25 (self-hosted)
@@ -44,7 +44,7 @@ resume/               the two résumé PDFs linked from the Resume menu (top rig
 
 ## Everyday edits
 
-- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261015b`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261015b` across the folder in VS Code.)
+- **After changing a CSS or JS file:** in `index.html` and the project pages, the links end in `?v=20261020`. Change that number (e.g. to today’s date) everywhere, so visitors’ browsers fetch the new file instead of a saved copy. (Find and replace `?v=20261020` across the folder in VS Code.)
 
 - **Change text on the landing page / Profile:** edit `js/data.js`.
 - **Change a project page:** edit its file in `projects/` (and `css/<page>.css`). It is ordinary HTML.

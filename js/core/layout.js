@@ -4,7 +4,7 @@ export function computeLayout(width, height) {
     const device = width < 700 ? "mobile" : width < 1100 || aspect < 1.15 ? "tablet" : "desktop";
     // a longer lens from further back: the centre frame reads flat and square-on, while the
     // diagonal either side still shows clear depth (previous frames toward you, next ones away)
-    const cardW = 3.2;
+    const cardW = 2.0 * (16 / 9); // the frame shape (js/core/track.js CARD_ASPECT)
     const cardH = 2.0;
     const base = {
         // fill: share of the screen height the centre frame takes; widthShare: of the width

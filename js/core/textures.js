@@ -15,7 +15,7 @@ function prepare(t) {
 function fallback(p) {
     const c = document.createElement("canvas");
     c.width = 512;
-    c.height = 320;
+    c.height = 288; // 16:9, the frame shape
     const g = c.getContext("2d");
     // a calm gradient in the project colour (the title is printed on top by the card shader;
     // fine stripes were dropped: they shimmered while the strip moved)
@@ -71,13 +71,13 @@ export function getProjectTexture(p) {
     if (!e) {
         const empty = new THREE.DataTexture(new Uint8Array([12, 12, 12, 255]), 1, 1);
         empty.needsUpdate = true;
-        e = { texture: empty, aspect: 1.6, listeners: new Set(), disposed: false };
+        e = { texture: empty, aspect: 16 / 9, listeners: new Set(), disposed: false };
         cache.set(key, e);
         const entry = e;
         const ready = loadImage(p.thumbnailSmall)
             .catch(() => loadImage(p.thumbnail))
             .then((r) => swap(entry, r))
-            .catch(() => swap(entry, { texture: fallback(p), aspect: 1.6 }))
+            .catch(() => swap(entry, { texture: fallback(p), aspect: 16 / 9 }))
             .finally(() => {
             loading.textureLoaded();
             idle(() => loadImage(p.thumbnail).then((r) => swap(entry, r), () => { }));

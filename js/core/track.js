@@ -31,20 +31,21 @@ export const WAVE = 0.035; // velocity-driven travelling wave along the strip (k
 export const WAVE_FREQ = 0.85;
 export const FOLD = 0.025; // velocity-driven twist of each frame (film being pulled)
 export const BILLOW = 0.012; // frames puff out a little while moving fast
-const DEFAULT_ASPECT = 1.6;
+/** every frame on the strip has the same shape (16:9); each cover is cropped to fill it, centred, without stretching */
+export const CARD_ASPECT = 16 / 9;
 /** signed slot of a frame relative to the centre (0 = centre frame, negative = left / earlier projects) */
 export const slotOf = (k, pos = motion.pos) => k - pos;
 let model = { key: "", centers: [], widths: [], total: 1 };
 /** frame centres along the strip (arc length), recomputed when content/layout change */
 export function stripModel(L) {
-    const key = `${INSTANCE_COUNT}|${L.cardH}|${L.gap}|${projects.map((p) => p.aspect ?? DEFAULT_ASPECT).join(",")}`;
+    const key = `${INSTANCE_COUNT}|${L.cardH}|${L.gap}|${CARD_ASPECT}`;
     if (model.key === key)
         return model;
     const widths = [];
     const centers = [];
     let x = 0;
     for (let k = 0; k < INSTANCE_COUNT; k++) {
-        const w = L.cardH * (projects[projectAtInstance(k)]?.aspect ?? DEFAULT_ASPECT);
+        const w = L.cardH * CARD_ASPECT;
         if (k > 0)
             x += widths[k - 1] / 2 + L.gap + w / 2;
         widths.push(w);

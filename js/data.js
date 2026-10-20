@@ -12,8 +12,7 @@ window.SITE = {
       "accent": "#4c603e",
       "page": "projects/songs-of-saaja.html",
       "thumbnail": "images/covers/songs-of-saaja.webp",
-      "thumbnailSmall": "images/covers/songs-of-saaja-sm.webp",
-      "aspect": 1.777
+      "thumbnailSmall": "images/covers/songs-of-saaja-sm.webp"
     },
     {
       "slug": "umbrella-man",
@@ -24,8 +23,7 @@ window.SITE = {
       "accent": "#96bae6",
       "page": null,
       "thumbnail": "images/covers/umbrella-man.webp",
-      "thumbnailSmall": "images/covers/umbrella-man-sm.webp",
-      "aspect": 1.905
+      "thumbnailSmall": "images/covers/umbrella-man-sm.webp"
     },
     {
       "slug": "elevator-empire",
@@ -36,8 +34,7 @@ window.SITE = {
       "accent": "#e85c26",
       "page": "projects/elevator-empire.html",
       "thumbnail": "images/covers/elevator-empire.webp?v=3",
-      "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=3",
-      "aspect": 1.86
+      "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=3"
     },
     {
       "slug": "farmville-2-event-design",
@@ -48,8 +45,7 @@ window.SITE = {
       "accent": "#537040",
       "page": null,
       "thumbnail": "images/covers/farmville-2-event-design.webp",
-      "thumbnailSmall": "images/covers/farmville-2-event-design-sm.webp",
-      "aspect": 2.2
+      "thumbnailSmall": "images/covers/farmville-2-event-design-sm.webp"
     },
     {
       "slug": "dashboards-and-ui",
