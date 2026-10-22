@@ -186,7 +186,7 @@
 }
 .rm .rm-fig { margin: 2.2rem 0 0; padding: 1.5rem 1.4rem 1.2rem; border: 1px solid var(--rm-line); border-radius: 24px; }
 .rm .rm-band-dark .rm-fig.rm-card { border: 0; }
-.rm .rm-fig-title { margin: 0 0 1.6rem; font-weight: 600; font-size: 1.05rem; line-height: 1.3; letter-spacing: -0.015em; }
+.rm .rm-content .rm-fig-title { margin: 0 0 1.6rem; font-weight: 600; font-size: 1.05rem; line-height: 1.3; letter-spacing: -0.015em; }
 .rm .rm-fig-src { margin: 1.1rem 0 0; font-size: 0.74rem; line-height: 1.5; color: var(--rm-muted); }
 .rm .rm-loop + .rm-loop { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--rm-line); }
 .rm .rm-loop h3 { margin: 0 0 0.9rem; font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; }
@@ -233,3 +233,17 @@
 .rm .rm-hero { padding-top: 6rem; }
 .rm .rm-hero .rm-eyebrow { margin-top: 0; }
 .rm .rm-panel { top: 5rem; }
+
+/* real game screenshots */
+.rm .rm-shots { display: grid; grid-template-columns: repeat(2, minmax(0, 17.5rem)); gap: 1.4rem; margin: 2rem 0 0; }
+.rm .rm-shot { margin: 0; }
+.rm .rm-shot img { display: block; width: 100%; height: auto; border-radius: 20px; box-shadow: 0 10px 28px rgba(38, 38, 38, 0.18); }
+.rm .rm-shot figcaption { margin-top: 0.8rem; font-size: 0.85rem; line-height: 1.5; color: var(--rm-muted); }
+.rm .rm-shot figcaption strong { color: var(--rm-fg); font-weight: 600; }
+.rm .rm-shot-row { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 2rem; align-items: start; margin: 2rem 0; }
+.rm .rm-shot-text p { margin: 0 0 1rem; }
+@media (max-width: 34rem) {
+  .rm .rm-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; }
+  .rm .rm-shot-row { grid-template-columns: minmax(0, 1fr); }
+  .rm .rm-shot-row .rm-shot { max-width: 14rem; }
+}
