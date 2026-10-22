@@ -37,6 +37,17 @@ window.SITE = {
       "thumbnailSmall": "images/covers/elevator-empire-sm.webp?v=3"
     },
     {
+      "slug": "royal-match",
+      "title": "Royal Match vs. Gambling Apps",
+      "description": "A case study of what a hit puzzle game and a gambling app have in common, and why India banned one and not the other.",
+      "subtitle": "Game Design Case Study",
+      "year": "2026",
+      "accent": "#ffa45c",
+      "page": "projects/royal-match.html",
+      "thumbnail": "images/covers/royal-match.webp",
+      "thumbnailSmall": "images/covers/royal-match-sm.webp"
+    },
+    {
       "slug": "farmville-2-event-design",
       "title": "Farmville 2 - Country Escape",
       "description": "Live-ops event design for FarmVille 2, focused on retention and player progression.",

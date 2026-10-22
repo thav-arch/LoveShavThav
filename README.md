@@ -79,7 +79,8 @@ A project page can hold any number of looping videos; `js/video-manager.js` make
 
 ## Known state
 
-- **Songs of Saaja**, **Elevator Empire** and **The Umbrella Man** have project pages; the other three cards show "coming soon".
+- **Songs of Saaja**, **Elevator Empire**, **The Umbrella Man** and **Royal Match vs. Gambling Apps** have project pages; the other three cards show "coming soon".
+- **Royal Match vs. Gambling Apps** is a hand-written page (no Figma export): `projects/royal-match.html`, `css/royal-match.css` (every rule starts with `.rm`, every class with `rm-`, so it cannot affect other pages) and `js/pages/royal-match.js` (section jumps and the small playable match-3 / slot demo). Its cover images are `images/covers/royal-match.webp` and `royal-match-sm.webp`.
 - **The Umbrella Man** trailer is a YouTube embed (muted autoplay, loop) at the top of `projects/umbrella-man.html`; to change the video, replace the ID `XIdpNlEZ2z4` (twice) in its `src`. The "Check out the Narrative Document" button becomes a link when you give the `<a class="um-btn">` an `href`.
 - **Elevator Empire** is the Figma page exported as artwork slices with live text and videos on top, scaled to the window width. On phones it is the same layout scaled down (pinch-zoom works); a dedicated phone layout needs the artwork cut into separate pieces.
 - *Dashboards and UI* and *PowerUI Library* have no cover image yet, so they show a generated placeholder card. Drop `<slug>.webp` and `<slug>-sm.webp` into `images/covers/` and fill `thumbnail` / `thumbnailSmall` in `js/data.js`.
